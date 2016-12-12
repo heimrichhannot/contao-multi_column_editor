@@ -18,7 +18,7 @@ class Hooks extends \Controller
                 die('Bad Request');
             }
 
-            die(MultiColumnEditor::generateEditorForm('multicolumneditor_editor', $objDc));
+            die(MultiColumnEditor::generateEditorForm('multi_column_editor', $objDc));
         }
     }
 }

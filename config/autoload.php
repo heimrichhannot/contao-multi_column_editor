@@ -36,5 +36,5 @@ ClassLoader::addClasses(array
  */
 TemplateLoader::addFiles(array
 (
-	'multicolumneditor_editor' => 'system/modules/multi_column_editor/templates',
+	'multi_column_editor' => 'system/modules/multi_column_editor/templates',
 ));

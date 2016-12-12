@@ -11,7 +11,7 @@ class MultiColumnEditor extends \Widget
     protected $blnSubmitInput    = true;
     protected $blnForAttribute   = true;
     protected $strTemplate       = 'be_widget';
-    protected $strEditorTemplate = 'multicolumneditor_editor';
+    protected $strEditorTemplate = 'multi_column_editor';
     protected $arrDca;
     protected $arrWidgetErrors   = array();
 
