@@ -2,7 +2,7 @@
 
 This module offers an input type for editing one or more records in backend and frontend (not yet implemented, but planned).
 
-The module is similar to [menatwork/MultiColumnWizard](https://github.com/menatwork/MultiColumnWizard) but it is planned to be working in frontend also.
+The module is similar to [menatwork/MultiColumnWizard](https://github.com/menatwork/MultiColumnWizard) but it is planned to be working in frontend as well.
 
 ![alt text](./docs/screenshot.png "Demo in the backend")
 
@@ -13,7 +13,7 @@ The module is similar to [menatwork/MultiColumnWizard](https://github.com/menatw
 Use the inputType "multiColumnEditor" for your field.
 
 ```
-'client_logo' => array(
+'someField' => array(
     'label'     => &$GLOBALS['TL_LANG']['tl_my_table']['someField'],
     'inputType' => 'multiColumnEditor',
     'eval'      => array(
