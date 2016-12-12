@@ -1,0 +1,28 @@
+<div class="multi-column-editor<?php if ($this->class): ?> <?= $this->class ?>"<?php endif; ?>" data-field="<?= $this->fieldName ?>">
+    <?= $this->rowCount->parse(); ?>
+
+    <div class="rows">
+        <?php foreach ($this->rows as $i => $arrRow): ?>
+            <div class="row row_<?= ++$i ?>" data-index="<?= $i ?>">
+                <?php foreach ($arrRow as $strField => $objWidget): ?>
+                    <?php if ($objWidget->type == 'hidden'): ?>
+                        <?= $objWidget->parse(); ?>
+                    <?php else: ?>
+                        <div class="form-group <?= $strField ?>" data-name="<?= $objWidget->noIndex ?>">
+                            <?= $objWidget->parse(); ?>
+                        </div>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+                <div class="actions">
+                    <a href="<?= \Environment::get('request') ?>" class="add">
+                        <img src="/system/themes/flexible/images/copy.gif">
+                    </a>
+
+                    <a href="<?= \Environment::get('request') ?>" class="delete">
+                        <img src="/system/themes/flexible/images/delete.gif">
+                    </a>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>

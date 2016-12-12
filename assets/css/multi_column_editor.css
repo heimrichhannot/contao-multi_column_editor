@@ -1,0 +1,25 @@
+.multi-column-editor .row {
+  clear: left;
+}
+.multi-column-editor .row .form-group {
+  display: block;
+  float: left;
+  margin-right: 10px;
+  position: relative;
+  margin-bottom: 10px;
+}
+.multi-column-editor .row .form-group .tl_checkbox_single_container {
+  margin-top: 34px;
+}
+.multi-column-editor .row .form-group input[type="text"],
+.multi-column-editor .row .form-group input[type="password"] {
+  padding: 3px;
+}
+.multi-column-editor .row .actions {
+  display: block;
+  float: left;
+  margin-top: 33px;
+}
+.multi-column-editor + .tl_tip {
+  clear: left;
+}
