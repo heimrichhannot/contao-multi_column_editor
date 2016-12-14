@@ -19,6 +19,10 @@ Use the inputType "multiColumnEditor" for your field.
     'eval'      => array(
         'multiColumnEditor' => array(
             'class' => 'some-class',
+            // set to 0 if it should also be possible to have *no* row (default: 1)
+            'minRowCount' => 2,
+            // set to 0 if an infinite number of rows should be possible (default: 0)
+            'maxRowCount' => 5,
             'fields' => array(
                 // place your fields here as you would normally in your DCA
             )

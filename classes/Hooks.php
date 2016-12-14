@@ -3,6 +3,8 @@
 namespace HeimrichHannot\MultiColumnEditor;
 
 
+use HeimrichHannot\Haste\Dca\General;
+
 class Hooks extends \Controller
 {
 
@@ -12,11 +14,16 @@ class Hooks extends \Controller
         {
             $objDc->field = \Input::post('field');
 
-            if (!$objDc->field || !\Input::post('row'))
+            if (!$objDc->field)
             {
                 header('HTTP/1.1 400 Bad Request');
                 die('Bad Request');
             }
+
+//            if($objDc->activeRecord === null)
+//            {
+//                $objDc->activeRecord = General::getModelInstance($objDc->table, $objDc->id);
+//            }
 
             die(MultiColumnEditor::generateEditorForm('multi_column_editor', $objDc));
         }

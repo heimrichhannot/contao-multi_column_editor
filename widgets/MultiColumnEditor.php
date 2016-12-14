@@ -10,7 +10,7 @@ class MultiColumnEditor extends \Widget
 
     protected $blnSubmitInput    = true;
     protected $blnForAttribute   = true;
-    protected $strTemplate       = 'be_widget';
+    protected $strTemplate       = 'be_multi_column_editor';
     protected $strEditorTemplate = 'multi_column_editor';
     protected $arrDca;
     protected $arrWidgetErrors   = array();
@@ -31,7 +31,7 @@ class MultiColumnEditor extends \Widget
     {
         // validate every field
         $varInput     = array();
-        $intRowCount  = \Input::post('rowCount') ?: 1;
+        $intRowCount  = \Input::post('rowCount');
         $blnHasErrors = false;
 
         for ($i = 1; $i <= $intRowCount; $i++)
@@ -106,22 +106,26 @@ class MultiColumnEditor extends \Widget
 
     public static function generateEditorForm($strEditorTemplate, $objDc, $arrDca = null, $arrErrors = array())
     {
-        $objTemplate            = new \BackendTemplate($strEditorTemplate);
-        $objTemplate->fieldName = $objDc->field;
-        $objTemplate->class     = $arrDca['class'];
-
-        $intRowCount = \Input::post('rowCount') ?: 1;
-        $strAction   = \Input::post('action');
-
         if ($arrDca === null)
         {
             $arrDca = $GLOBALS['TL_DCA'][$objDc->table]['fields'][$objDc->field]['eval']['multiColumnEditor'];
         }
 
+        $objTemplate              = new \BackendTemplate($strEditorTemplate);
+        $objTemplate->fieldName   = $objDc->field;
+        $objTemplate->class       = $arrDca['class'];
+        $intMinRowCount           = isset($arrDca['minRowCount']) ? $arrDca['minRowCount'] : 1;
+        $intMaxRowCount           = isset($arrDca['maxRowCount']) ? $arrDca['maxRowCount'] : 0;
+        $objTemplate->minRowCount = $intMinRowCount;
+        $objTemplate->maxRowCount = $intMaxRowCount;
+
+        $intRowCount = \Input::post('rowCount') ?: $intMinRowCount;
+        $strAction   = \Input::post('action');
+
         // restore from entity
-        if ($objDc->activeRecord->{$objDc->field})
+        if ($objDc->value)
         {
-            $arrValues = deserialize($objDc->activeRecord->{$objDc->field}, true);
+            $arrValues = deserialize($objDc->value, true);
         }
         else
         {
@@ -129,11 +133,25 @@ class MultiColumnEditor extends \Widget
         }
 
         // handle ajax requests
-        if (\Environment::get('isAjaxRequest') && ($intIndex = \Input::post('row')))
+        if (\Environment::get('isAjaxRequest'))
         {
             switch ($strAction)
             {
                 case MultiColumnEditor::ACTION_ADD_ROW:
+                    if (!($intIndex = \Input::post('row')))
+                    {
+                        $arrRow = array();
+
+                        foreach (array_keys($arrDca['fields']) as $strField)
+                        {
+                            $arrRow[$strField] = null;
+                        }
+
+                        $arrValues[] = $arrRow;
+
+                        break;
+                    }
+
                     $arrValues = array();
 
                     for ($i = 1; $i <= $intRowCount; $i++)
@@ -147,7 +165,7 @@ class MultiColumnEditor extends \Widget
 
                         $arrValues[] = $arrRow;
 
-                        if ($i == $intIndex)
+                        if ($i == $intIndex && ($intMaxRowCount == 0 || ($intRowCount + 1 <= $intMaxRowCount)))
                         {
                             $arrValues[] = $arrRow;
                         }
@@ -156,11 +174,16 @@ class MultiColumnEditor extends \Widget
                     break;
 
                 case MultiColumnEditor::ACTION_DELETE_ROW:
+                    if (!($intIndex = \Input::post('row')))
+                    {
+                        break;
+                    }
+
                     $arrValues = array();
 
                     for ($i = 1; $i <= $intRowCount; $i++)
                     {
-                        if ($i == $intIndex)
+                        if ($i == $intIndex && $intRowCount - 1 >= $intMinRowCount)
                         {
                             continue;
                         }
@@ -185,7 +208,7 @@ class MultiColumnEditor extends \Widget
             array(
                 'inputType' => 'hidden',
             ),
-            count($arrValues)
+            count($arrValues) ?: $intMinRowCount
         );
 
         $objTemplate->rowCount = $objWidget;

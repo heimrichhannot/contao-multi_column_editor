@@ -5,10 +5,10 @@
             this.initWidget();
         },
         initWidget: function () {
-            var $editor = $('.multi-column-editor');
+            var $wrapper = $('.multi-column-editor-wrapper');
 
-            $editor
-                .on('click', '.actions .add', function (e) {
+            $('body')
+                .on('click', '.multi-column-editor .add', function (e) {
                     var $link = $(this),
                         formData = $(this).closest('form').serializeArray();
 
@@ -32,43 +32,41 @@
                         $link.attr('href'),
                         formData,
                         function (response) {
-                            $editor.html(response);
+                            $wrapper.html(response);
                             MultiColumnEditor.initChosen();
                             Stylect.convertSelects();
                         }
                     );
                 })
-                .on('click', '.actions .delete', function (e) {
+                .on('click', '.multi-column-editor .delete', function (e) {
                     e.preventDefault();
 
-                    if ($(this).closest('.rows').children().length > 1) {
-                        var $link = $(this),
-                            formData = $(this).closest('form').serializeArray();
+                    var $link = $(this),
+                        formData = $(this).closest('form').serializeArray();
 
-                        $.merge(formData, [
-                            {
-                                'name': 'action',
-                                'value': 'deleteRow'
-                            }, {
-                                'name': 'row',
-                                'value': $link.closest('.row').data('index')
-                            },
-                            {
-                                'name': 'field',
-                                'value': $link.closest('.multi-column-editor').data('field')
-                            }
-                        ]);
+                    $.merge(formData, [
+                        {
+                            'name': 'action',
+                            'value': 'deleteRow'
+                        }, {
+                            'name': 'row',
+                            'value': $link.closest('.row').data('index')
+                        },
+                        {
+                            'name': 'field',
+                            'value': $link.closest('.multi-column-editor').data('field')
+                        }
+                    ]);
 
-                        $.post(
-                            $link.attr('href'),
-                            formData,
-                            function (response) {
-                                $editor.html(response);
-                                MultiColumnEditor.initChosen();
-                                Stylect.convertSelects();
-                            }
-                        );
-                    }
+                    $.post(
+                        $link.attr('href'),
+                        formData,
+                        function (response) {
+                            $wrapper.html(response);
+                            MultiColumnEditor.initChosen();
+                            Stylect.convertSelects();
+                        }
+                    );
                 });
         }
     };
@@ -79,10 +77,15 @@
 
 })(jQuery);
 
-(function() {
-    window.addEvent('domready', function() {
-        MultiColumnEditor.initChosen = function() {
-            $$('.multi-column-editor select.tl_chosen').chosen();
+(function () {
+    window.addEvent('domready', function () {
+        MultiColumnEditor.initChosen = function () {
+            $$('.multi-column-editor select.tl_chosen').each(function (el) {
+                if (typeof el.initialized === 'undefined')
+                {
+                    el.initialized = $$('#' + el.getAttribute('id')).chosen();
+                }
+            });
         };
     });
 })();

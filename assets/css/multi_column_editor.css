@@ -1,25 +1,28 @@
-.multi-column-editor .row {
+.multi-column-editor-wrapper .multi-column-editor .add {
+  margin: 10px 0;
+}
+.multi-column-editor-wrapper .multi-column-editor .row {
   clear: left;
 }
-.multi-column-editor .row .form-group {
+.multi-column-editor-wrapper .multi-column-editor .row .form-group {
   display: block;
   float: left;
   margin-right: 10px;
   position: relative;
   margin-bottom: 10px;
 }
-.multi-column-editor .row .form-group .tl_checkbox_single_container {
+.multi-column-editor-wrapper .multi-column-editor .row .form-group .tl_checkbox_single_container {
   margin-top: 34px;
 }
-.multi-column-editor .row .form-group input[type="text"],
-.multi-column-editor .row .form-group input[type="password"] {
+.multi-column-editor-wrapper .multi-column-editor .row .form-group input[type="text"],
+.multi-column-editor-wrapper .multi-column-editor .row .form-group input[type="password"] {
   padding: 3px;
 }
-.multi-column-editor .row .actions {
+.multi-column-editor-wrapper .multi-column-editor .row .actions {
   display: block;
   float: left;
   margin-top: 33px;
 }
-.multi-column-editor + .tl_tip {
+.multi-column-editor-wrapper + .tl_tip {
   clear: left;
 }
