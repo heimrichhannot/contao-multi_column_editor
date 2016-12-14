@@ -39,8 +39,6 @@
                     );
                 })
                 .on('click', '.actions .delete', function (e) {
-                    console.log('Hallo');
-
                     e.preventDefault();
 
                     if ($(this).closest('.rows').children().length > 1) {
@@ -84,7 +82,7 @@
 (function() {
     window.addEvent('domready', function() {
         MultiColumnEditor.initChosen = function() {
-            $$('select.tl_chosen').chosen();
+            $$('.multi-column-editor select.tl_chosen').chosen();
         };
     });
 })();
