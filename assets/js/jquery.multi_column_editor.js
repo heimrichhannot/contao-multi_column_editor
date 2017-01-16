@@ -1,91 +1,122 @@
-(function ($) {
+(function($)
+{
     MultiColumnEditor = {
 
-        init: function () {
+        init: function()
+        {
             this.initWidget();
         },
-        initWidget: function () {
+        initWidget: function()
+        {
             var $wrapper = $('.multi-column-editor-wrapper');
 
-            $('body')
-                .on('click', '.multi-column-editor .add', function (e) {
-                    var $link = $(this),
-                        formData = $(this).closest('form').serializeArray();
+            if ($wrapper.length < 1)
+            {
+                return;
+            }
 
-                    e.preventDefault();
+            function doAction($link, action) {
+                var formData = $link.closest('form').serializeArray(),
+                    formDataNew = [],
+                    isFrontend = $wrapper.find('.multi-column-editor').hasClass('fe');
 
-                    $.merge(formData, [
-                        {
-                            'name': 'action',
-                            'value': 'addRow'
-                        }, {
-                            'name': 'row',
-                            'value': $link.closest('.row').data('index')
-                        },
-                        {
-                            'name': 'field',
-                            'value': $link.closest('.multi-column-editor').data('field')
-                        }
-                    ]);
-
-                    $.post(
-                        $link.attr('href'),
-                        formData,
-                        function (response) {
-                            $wrapper.html(response);
-                            MultiColumnEditor.initChosen();
-                            Stylect.convertSelects();
-                        }
-                    );
-                })
-                .on('click', '.multi-column-editor .delete', function (e) {
-                    e.preventDefault();
-
-                    var $link = $(this),
-                        formData = $(this).closest('form').serializeArray();
-
-                    $.merge(formData, [
-                        {
-                            'name': 'action',
-                            'value': 'deleteRow'
-                        }, {
-                            'name': 'row',
-                            'value': $link.closest('.row').data('index')
-                        },
-                        {
-                            'name': 'field',
-                            'value': $link.closest('.multi-column-editor').data('field')
-                        }
-                    ]);
-
-                    $.post(
-                        $link.attr('href'),
-                        formData,
-                        function (response) {
-                            $wrapper.html(response);
-                            MultiColumnEditor.initChosen();
-                            Stylect.convertSelects();
-                        }
-                    );
+                // remove FORM_SUBMIT -> no submit callbacks should be fired
+                $.each(formData, function(index, item) {
+                    if (item.name != 'FORM_SUBMIT') {
+                        formDataNew.push(item);
+                    }
                 });
+
+                formData = formDataNew;
+
+                console.log($link);
+
+                $.merge(formData, [
+                    {
+                        'name': 'row',
+                        'value': $link.closest('.mce-row').data('index')
+                    },
+                    {
+                        'name': 'field',
+                        'value': $link.closest('.multi-column-editor').data('field')
+                    },
+                    {
+                        'name': 'table',
+                        'value': $link.closest('.multi-column-editor').data('table')
+                    }
+                ]);
+
+                if (!isFrontend)
+                {
+                    $.merge(formData, [
+                        {
+                            'name': 'action',
+                            'value': action
+                        }
+                    ]);
+                }
+
+                $.post(
+                    $link.attr('href'),
+                    formData,
+                    function(response)
+                    {
+                        if (isFrontend)
+                        {
+                            $wrapper.html(response.result.html);
+                        }
+                        else
+                        {
+                            $wrapper.html(response);
+                            MultiColumnEditor.initChosen();
+                            Stylect.convertSelects();
+                        }
+                    }
+                );
+            }
+
+            $('body').on('click', '.multi-column-editor .add', function(e)
+            {
+                var $link = $(this);
+
+                e.preventDefault();
+
+                doAction($link, 'addRow');
+            }).on('click', '.multi-column-editor .delete', function(e)
+            {
+                var $link = $(this);
+
+                e.preventDefault();
+
+                doAction($link, 'deleteRow');
+            });
         }
     };
 
-    $(document).ready(function () {
+    $(document).ready(function()
+    {
         MultiColumnEditor.init();
     });
 
 })(jQuery);
 
-(function () {
-    window.addEvent('domready', function () {
-        MultiColumnEditor.initChosen = function () {
-            $$('.multi-column-editor select.tl_chosen').each(function (el) {
-                if (typeof el.initialized === 'undefined')
+// backend only
+(function()
+{
+    if (typeof window.addEvent === 'function')
+    {
+        window.addEvent('domready', function()
+        {
+            MultiColumnEditor.initChosen = function()
+            {
+                $$('.multi-column-editor select.tl_chosen').each(function(el)
                 {
-                    el.initialized = $$('#' + el.getAttribute('id')).chosen();
-                }
-            });
-        };
-    });
+                    if (typeof el.initialized === 'undefined')
+                    {
+                        el.initialized = $$('#' + el.getAttribute('id')).chosen();
+                    }
+                });
+            };
+        });
+    }
 })();

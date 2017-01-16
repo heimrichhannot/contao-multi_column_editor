@@ -1,12 +1,13 @@
-<div class="multi-column-editor<?php if ($this->class): ?> <?= $this->class ?>"<?php endif; ?>" data-field="<?= $this->fieldName ?>" data-min-row-count="<?= $this->minRowCount ?>" data-max-row-count="<?= $this->maxRowCount ?>">
+<div class="multi-column-editor<?php if ($this->class): ?> <?= $this->class ?><?php endif; ?><?php if (TL_MODE == 'FE'): ?> fe<?php endif; ?>"
+     data-field="<?= $this->fieldName ?>" data-table="<?= $this->table ?>" data-min-row-count="<?= $this->minRowCount ?>" data-max-row-count="<?= $this->maxRowCount ?>">
     <?= $this->rowCount->parse(); ?>
 
     <?php if (!$this->rowCount->value): ?>
-        <a href="<?= \Environment::get('request') ?>" class="add tl_submit"><?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['add']; ?></a>
+        <a href="<?= $this->ajaxAddUrl ?>" class="add tl_submit"><?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['add']; ?></a>
     <?php else: ?>
         <div class="rows">
             <?php foreach ($this->rows as $i => $arrRow): ?>
-                <div class="row row_<?= ++$i ?>" data-index="<?= $i ?>">
+                <div class="mce-row row_<?= ++$i ?>" data-index="<?= $i ?>">
                     <?php foreach ($arrRow as $strField => $objWidget): ?>
                         <?php if ($objWidget->type == 'hidden'): ?>
                             <?= $objWidget->parse(); ?>
@@ -17,13 +18,23 @@
                         <?php endif; ?>
                     <?php endforeach; ?>
                     <div class="actions">
-                        <a href="<?= \Environment::get('request') ?>" class="add">
-                            <img src="/system/themes/flexible/images/copy.gif">
-                        </a>
+                        <?php if (TL_MODE == 'BE'): ?>
+                            <a href="<?= $this->ajaxAddUrl ?>" class="add">
+                                <img src="/system/themes/flexible/images/copy.gif">
+                            </a>
 
-                        <a href="<?= \Environment::get('request') ?>" class="delete">
-                            <img src="/system/themes/flexible/images/delete.gif">
-                        </a>
+                            <a href="<?= $this->ajaxDeleteUrl ?>" class="delete">
+                                <img src="/system/themes/flexible/images/delete.gif">
+                            </a>
+                        <?php else: ?>
+                            <a href="<?= $this->ajaxAddUrl ?>" class="add btn btn-primary btn-xs">
+                                <i class="fa fa-plus"></i>&nbsp;&nbsp;<?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['add'] ?>
+                            </a>
+
+                            <a href="<?= $this->ajaxDeleteUrl ?>" class="delete btn btn-primary btn-xs">
+                                <i class="fa fa-times"></i>&nbsp;&nbsp;<?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['delete'] ?>
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             <?php endforeach; ?>

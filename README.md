@@ -1,8 +1,8 @@
 # Multi Column Editor
 
-This module offers an input type for editing one or more records in backend and frontend (not yet implemented, but planned).
+This module offers an input type for editing one or more records in backend and frontend.
 
-The module is similar to [menatwork/MultiColumnWizard](https://github.com/menatwork/MultiColumnWizard) but it is planned to be working in frontend as well.
+The module is similar to [menatwork/MultiColumnWizard](https://github.com/menatwork/MultiColumnWizard) but works in frontend as well (in combination with the form generator module [heimrichhannot/contao-formhybrid](https://github.com/heimrichhannot/contao-formhybrid ).
 
 ![alt text](./docs/screenshot.png "Demo in the backend")
 

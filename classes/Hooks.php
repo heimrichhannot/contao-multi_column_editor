@@ -20,12 +20,7 @@ class Hooks extends \Controller
                 die('Bad Request');
             }
 
-//            if($objDc->activeRecord === null)
-//            {
-//                $objDc->activeRecord = General::getModelInstance($objDc->table, $objDc->id);
-//            }
-
-            die(MultiColumnEditor::generateEditorForm('multi_column_editor', $objDc));
+            die(MultiColumnEditor::generateEditorForm('multi_column_editor', $objDc->table, $objDc->field, $objDc->value, $objDc));
         }
     }
 }

@@ -3,6 +3,9 @@
 namespace HeimrichHannot\MultiColumnEditor;
 
 
+use HeimrichHannot\Ajax\Ajax;
+use HeimrichHannot\Ajax\AjaxAction;
+use HeimrichHannot\FormHybrid\FormAjax;
 use HeimrichHannot\Haste\Util\Widget;
 
 class MultiColumnEditor extends \Widget
@@ -18,12 +21,20 @@ class MultiColumnEditor extends \Widget
     const ACTION_ADD_ROW    = 'addRow';
     const ACTION_DELETE_ROW = 'deleteRow';
 
+    const NAME = 'multicolumneditor';
+
     public function __construct($arrData)
     {
         \Controller::loadDataContainer($arrData['strTable']);
         $this->arrDca = $GLOBALS['TL_DCA'][$arrData['strTable']]['fields'][$arrData['strField']]['eval']['multiColumnEditor'];
 
         parent::__construct($arrData);
+
+        if (TL_MODE == 'FE')
+        {
+            Ajax::runActiveAction(static::NAME, static::ACTION_ADD_ROW, new MceAjax($this->objDca));
+            Ajax::runActiveAction(static::NAME, static::ACTION_DELETE_ROW, new MceAjax($this->objDca));
+        }
     }
 
 
@@ -38,7 +49,9 @@ class MultiColumnEditor extends \Widget
         {
             foreach ($this->arrDca['fields'] as $strField => $arrData)
             {
-                if (!($objWidget = Widget::getBackendFormField($strField . '_' . $i, $arrData, null, $strField, $this->strTable, $this->objDca)))
+                $strMethod = TL_MODE == 'FE' ? 'getFrontendFormField' : 'getBackendFormField';
+
+                if (!($objWidget = Widget::$strMethod($strField . '_' . $i, $arrData, null, $strField, $this->strTable, $this->objDca)))
                 {
                     continue;
                 }
@@ -63,7 +76,7 @@ class MultiColumnEditor extends \Widget
 
                         try
                         {
-                            $varValue = $this->{$callback[0]}->{$callback[1]}($varValue, $this);
+                            $varValue = $this->{$callback[0]}->{$callback[1]}($varValue, $this->objDca);
                         } catch (\Exception $e)
                         {
                             $objWidget->class = 'error';
@@ -101,31 +114,58 @@ class MultiColumnEditor extends \Widget
      */
     public function generate()
     {
-        return static::generateEditorForm($this->strEditorTemplate, $this->objDca, $this->arrDca, $this->arrWidgetErrors);
+        if (TL_MODE == 'BE')
+        {
+            $strTable     = $this->objDca->table;
+            $strFieldName = $this->objDca->field;
+            $varValue     = $this->objDca->value;
+        }
+        else
+        {
+            $strTable     = $this->strTable;
+            $strFieldName = $this->strName;
+            $varValue     = $this->varValue;
+        }
+
+        return '<div class="multi-column-editor-wrapper">' . static::generateEditorForm(
+            $this->strEditorTemplate,
+            $strTable,
+            $strFieldName,
+            $varValue,
+            $this->objDca,
+            $this->arrDca,
+            $this->arrWidgetErrors
+        ) . '</div>';
     }
 
-    public static function generateEditorForm($strEditorTemplate, $objDc, $arrDca = null, $arrErrors = array())
+    public static function generateEditorForm($strEditorTemplate, $strTable, $strFieldName, $varValue, $objDc, $arrDca = null, $arrErrors = array(), $strAction = null)
     {
         if ($arrDca === null)
         {
-            $arrDca = $GLOBALS['TL_DCA'][$objDc->table]['fields'][$objDc->field]['eval']['multiColumnEditor'];
+            $arrDca = $GLOBALS['TL_DCA'][$strTable]['fields'][$strFieldName]['eval']['multiColumnEditor'];
         }
 
         $objTemplate              = new \BackendTemplate($strEditorTemplate);
-        $objTemplate->fieldName   = $objDc->field;
+        $objTemplate->fieldName   = $strFieldName;
+        $objTemplate->table       = $strTable;
         $objTemplate->class       = $arrDca['class'];
         $intMinRowCount           = isset($arrDca['minRowCount']) ? $arrDca['minRowCount'] : 1;
         $intMaxRowCount           = isset($arrDca['maxRowCount']) ? $arrDca['maxRowCount'] : 0;
         $objTemplate->minRowCount = $intMinRowCount;
         $objTemplate->maxRowCount = $intMaxRowCount;
 
+        // actions
+        $objTemplate->ajaxAddUrl    = TL_MODE == 'BE' ? \Environment::get('request') : AjaxAction::generateUrl(static::NAME, static::ACTION_ADD_ROW);
+        $objTemplate->ajaxDeleteUrl =
+            TL_MODE == 'BE' ? \Environment::get('request') : AjaxAction::generateUrl(static::NAME, static::ACTION_DELETE_ROW);
+
         $intRowCount = \Input::post('rowCount') ?: $intMinRowCount;
-        $strAction   = \Input::post('action');
+        $strAction   = $strAction ?: \Input::post('action');
 
         // restore from entity
-        if ($objDc->value)
+        if ($varValue)
         {
-            $arrValues = deserialize($objDc->value, true);
+            $arrValues = deserialize($varValue, true);
         }
         else
         {
@@ -133,71 +173,29 @@ class MultiColumnEditor extends \Widget
         }
 
         // handle ajax requests
-        if (\Environment::get('isAjaxRequest'))
+        if (TL_MODE == 'BE' && \Environment::get('isAjaxRequest'))
         {
             switch ($strAction)
             {
-                case MultiColumnEditor::ACTION_ADD_ROW:
-                    if (!($intIndex = \Input::post('row')))
-                    {
-                        $arrRow = array();
-
-                        foreach (array_keys($arrDca['fields']) as $strField)
-                        {
-                            $arrRow[$strField] = null;
-                        }
-
-                        $arrValues[] = $arrRow;
-
-                        break;
-                    }
-
-                    $arrValues = array();
-
-                    for ($i = 1; $i <= $intRowCount; $i++)
-                    {
-                        $arrRow = array();
-
-                        foreach (array_keys($arrDca['fields']) as $strField)
-                        {
-                            $arrRow[$strField] = \Input::post($strField . '_' . $i);
-                        }
-
-                        $arrValues[] = $arrRow;
-
-                        if ($i == $intIndex && ($intMaxRowCount == 0 || ($intRowCount + 1 <= $intMaxRowCount)))
-                        {
-                            $arrValues[] = $arrRow;
-                        }
-                    }
-
+                case static::ACTION_ADD_ROW:
+                    $arrValues = static::addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount);
                     break;
 
-                case MultiColumnEditor::ACTION_DELETE_ROW:
-                    if (!($intIndex = \Input::post('row')))
-                    {
-                        break;
-                    }
+                case static::ACTION_DELETE_ROW:
+                    $arrValues = static::deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount);
+                    break;
+            }
+        }
+        elseif (Ajax::isRelated(static::NAME))
+        {
+            switch ($strAction)
+            {
+                case static::ACTION_ADD_ROW:
+                    $arrValues = static::addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount);
+                    break;
 
-                    $arrValues = array();
-
-                    for ($i = 1; $i <= $intRowCount; $i++)
-                    {
-                        if ($i == $intIndex && $intRowCount - 1 >= $intMinRowCount)
-                        {
-                            continue;
-                        }
-
-                        $arrRow = array();
-
-                        foreach (array_keys($arrDca['fields']) as $strField)
-                        {
-                            $arrRow[$strField] = \Input::post($strField . '_' . $i);
-                        }
-
-                        $arrValues[] = $arrRow;
-                    }
-
+                case static::ACTION_DELETE_ROW:
+                    $arrValues = static::deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount);
                     break;
             }
         }
@@ -215,12 +213,79 @@ class MultiColumnEditor extends \Widget
 
         // add rows
         $objTemplate->editorFormAction = \Environment::get('request');
-        $objTemplate->rows             = static::generateRows($intRowCount, $arrDca, $objDc, $arrValues, $arrErrors);
+        $objTemplate->rows             = static::generateRows($intRowCount, $arrDca, $strTable, $objDc, $arrValues, $arrErrors);
 
         return $objTemplate->parse();
     }
 
-    public static function generateRows($intRowCount, $arrDca, $objDc, array $arrValues = array(), $arrErrors = array())
+    public static function addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount)
+    {
+        if (!($intIndex = \Input::post('row')))
+        {
+            $arrRow = array();
+
+            foreach (array_keys($arrDca['fields']) as $strField)
+            {
+                $arrRow[$strField] = null;
+            }
+
+            $arrValues[] = $arrRow;
+
+            return $arrValues;
+        }
+
+        $arrValues = array();
+
+        for ($i = 1; $i <= $intRowCount; $i++)
+        {
+            $arrRow = array();
+
+            foreach (array_keys($arrDca['fields']) as $strField)
+            {
+                $arrRow[$strField] = \Input::post($strField . '_' . $i);
+            }
+
+            $arrValues[] = $arrRow;
+
+            if ($i == $intIndex && ($intMaxRowCount == 0 || ($intRowCount + 1 <= $intMaxRowCount)))
+            {
+                $arrValues[] = $arrRow;
+            }
+        }
+
+        return $arrValues;
+    }
+
+    public static function deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount)
+    {
+        if (!($intIndex = \Input::post('row')))
+        {
+            return $arrValues;
+        }
+
+        $arrValues = array();
+
+        for ($i = 1; $i <= $intRowCount; $i++)
+        {
+            if ($i == $intIndex && $intRowCount - 1 >= $intMinRowCount)
+            {
+                continue;
+            }
+
+            $arrRow = array();
+
+            foreach (array_keys($arrDca['fields']) as $strField)
+            {
+                $arrRow[$strField] = \Input::post($strField . '_' . $i);
+            }
+
+            $arrValues[] = $arrRow;
+        }
+
+        return $arrValues;
+    }
+
+    public static function generateRows($intRowCount, $arrDca, $strTable, $objDc, array $arrValues = array(), $arrErrors = array())
     {
         $arrRows = array();
 
@@ -230,7 +295,9 @@ class MultiColumnEditor extends \Widget
 
             foreach ($arrDca['fields'] as $strField => $arrData)
             {
-                if (!($objWidget = Widget::getBackendFormField($strField . '_' . $i, $arrData, null, $strField, $objDc->table, $objDc)))
+                $strMethod = TL_MODE == 'FE' ? 'getFrontendFormField' : 'getBackendFormField';
+
+                if (!($objWidget = Widget::$strMethod($strField . '_' . $i, $arrData, null, $strField, $strTable, $objDc)))
                 {
                     continue;
                 }
