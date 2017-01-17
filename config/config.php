@@ -13,7 +13,7 @@ $GLOBALS['TL_FFL']['multiColumnEditor'] = 'HeimrichHannot\MultiColumnEditor\Form
 /**
  * Hooks
  */
-$GLOBALS['TL_HOOKS']['executePostActions']['multiColumnEditor'] = array('HeimrichHannot\MultiColumnEditor\Hooks', 'executePostActionsHook');
+$GLOBALS['TL_HOOKS']['executePostActions']['multiColumnEditor'] = ['HeimrichHannot\MultiColumnEditor\Hooks', 'executePostActionsHook'];
 
 /**
  * CSS
@@ -31,15 +31,15 @@ $GLOBALS['TL_JAVASCRIPT']['multi_column_editor'] = 'system/modules/multi_column_
 /**
  * Ajax
  */
-$GLOBALS['AJAX'][\HeimrichHannot\MultiColumnEditor\MultiColumnEditor::NAME] = array(
-    'actions' => array(
-        \HeimrichHannot\MultiColumnEditor\MultiColumnEditor::ACTION_ADD_ROW => array(
-            'arguments' => array('rowCount', 'row', 'field', 'table'),
-            'optional'  => array(),
-        ),
-        \HeimrichHannot\MultiColumnEditor\MultiColumnEditor::ACTION_DELETE_ROW => array(
-            'arguments' => array('rowCount', 'row', 'field', 'table'),
-            'optional'  => array(),
-        )
-    ),
-);
+$GLOBALS['AJAX'][\HeimrichHannot\MultiColumnEditor\MultiColumnEditor::NAME] = [
+    'actions' => [
+        \HeimrichHannot\MultiColumnEditor\MultiColumnEditor::ACTION_ADD_ROW => [
+            'arguments' => ['rowCount', 'row', 'field', 'table'],
+            'optional'  => [],
+        ],
+        \HeimrichHannot\MultiColumnEditor\MultiColumnEditor::ACTION_DELETE_ROW => [
+            'arguments' => ['rowCount', 'row', 'field', 'table'],
+            'optional'  => [],
+        ]
+    ],
+];

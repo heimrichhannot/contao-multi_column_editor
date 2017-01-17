@@ -16,7 +16,7 @@ class MultiColumnEditor extends \Widget
     protected $strTemplate       = 'be_multi_column_editor';
     protected $strEditorTemplate = 'multi_column_editor';
     protected $arrDca;
-    protected $arrWidgetErrors   = array();
+    protected $arrWidgetErrors   = [];
 
     const ACTION_ADD_ROW    = 'addRow';
     const ACTION_DELETE_ROW = 'deleteRow';
@@ -41,7 +41,7 @@ class MultiColumnEditor extends \Widget
     protected function validator($varInput)
     {
         // validate every field
-        $varInput     = array();
+        $varInput     = [];
         $intRowCount  = \Input::post('rowCount');
         $blnHasErrors = false;
 
@@ -138,7 +138,7 @@ class MultiColumnEditor extends \Widget
         ) . '</div>';
     }
 
-    public static function generateEditorForm($strEditorTemplate, $strTable, $strFieldName, $varValue, $objDc, $arrDca = null, $arrErrors = array(), $strAction = null)
+    public static function generateEditorForm($strEditorTemplate, $strTable, $strFieldName, $varValue, $objDc, $arrDca = null, $arrErrors = [], $strAction = null)
     {
         if ($arrDca === null)
         {
@@ -169,7 +169,7 @@ class MultiColumnEditor extends \Widget
         }
         else
         {
-            $arrValues = array();
+            $arrValues = [];
         }
 
         // handle ajax requests
@@ -203,9 +203,9 @@ class MultiColumnEditor extends \Widget
         // add row count field
         $objWidget = Widget::getFrontendFormField(
             'rowCount',
-            array(
+            [
                 'inputType' => 'hidden',
-            ),
+            ],
             count($arrValues) ?: $intMinRowCount
         );
 
@@ -222,7 +222,7 @@ class MultiColumnEditor extends \Widget
     {
         if (!($intIndex = \Input::post('row')))
         {
-            $arrRow = array();
+            $arrRow = [];
 
             foreach (array_keys($arrDca['fields']) as $strField)
             {
@@ -234,11 +234,11 @@ class MultiColumnEditor extends \Widget
             return $arrValues;
         }
 
-        $arrValues = array();
+        $arrValues = [];
 
         for ($i = 1; $i <= $intRowCount; $i++)
         {
-            $arrRow = array();
+            $arrRow = [];
 
             foreach (array_keys($arrDca['fields']) as $strField)
             {
@@ -263,7 +263,7 @@ class MultiColumnEditor extends \Widget
             return $arrValues;
         }
 
-        $arrValues = array();
+        $arrValues = [];
 
         for ($i = 1; $i <= $intRowCount; $i++)
         {
@@ -272,7 +272,7 @@ class MultiColumnEditor extends \Widget
                 continue;
             }
 
-            $arrRow = array();
+            $arrRow = [];
 
             foreach (array_keys($arrDca['fields']) as $strField)
             {
@@ -285,13 +285,13 @@ class MultiColumnEditor extends \Widget
         return $arrValues;
     }
 
-    public static function generateRows($intRowCount, $arrDca, $strTable, $objDc, array $arrValues = array(), $arrErrors = array())
+    public static function generateRows($intRowCount, $arrDca, $strTable, $objDc, array $arrValues = [], $arrErrors = [])
     {
-        $arrRows = array();
+        $arrRows = [];
 
         for ($i = 1; $i <= (empty($arrValues) ? $intRowCount : count($arrValues)); $i++)
         {
-            $arrFields = array();
+            $arrFields = [];
 
             foreach ($arrDca['fields'] as $strField => $arrData)
             {
