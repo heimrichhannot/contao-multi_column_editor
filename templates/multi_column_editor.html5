@@ -3,7 +3,13 @@
     <?= $this->rowCount->parse(); ?>
 
     <?php if (!$this->rowCount->value): ?>
-        <a href="<?= $this->ajaxAddUrl ?>" class="add tl_submit"><?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['add']; ?></a>
+        <?php if (TL_MODE == 'BE'): ?>
+            <a href="<?= $this->ajaxAddUrl ?>" class="add first tl_submit"><?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['add']; ?></a>
+        <?php else: ?>
+            <a href="<?= $this->ajaxAddUrl ?>" class="add first btn btn-primary">
+                <i class="fa fa-plus"></i>&nbsp;&nbsp;<?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['add'] ?>
+            </a>
+        <?php endif; ?>
     <?php else: ?>
         <div class="rows">
             <?php foreach ($this->rows as $i => $arrRow): ?>
