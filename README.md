@@ -25,7 +25,6 @@ Use the inputType "multiColumnEditor" for your field.
             'maxRowCount' => 5,
             'fields' => array(
                 // place your fields here as you would normally in your DCA
-                // sql is not required
             )
         )
     ),

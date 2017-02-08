@@ -42,7 +42,7 @@ class MultiColumnEditor extends \Widget
     {
         // validate every field
         $varInput     = [];
-        $intRowCount  = \Input::post('rowCount');
+        $intRowCount  = \Input::post($this->strName . '_' . 'rowCount');
         $blnHasErrors = false;
 
         for ($i = 1; $i <= $intRowCount; $i++)
@@ -51,7 +51,7 @@ class MultiColumnEditor extends \Widget
             {
                 $strMethod = TL_MODE == 'FE' ? 'getFrontendFormField' : 'getBackendFormField';
 
-                if (!($objWidget = Widget::$strMethod($strField . '_' . $i, $arrData, null, $strField, $this->strTable, $this->objDca)))
+                if (!($objWidget = Widget::$strMethod($this->strName . '_' . $strField . '_' . $i, $arrData, null, $strField, $this->strTable, $this->objDca)))
                 {
                     continue;
                 }
@@ -91,7 +91,7 @@ class MultiColumnEditor extends \Widget
                 if ($objWidget->hasErrors())
                 {
                     // store the errors
-                    $this->arrWidgetErrors[$strField . '_' . $i] = $objWidget->getErrors();
+                    $this->arrWidgetErrors[$this->strName . '_' . $strField . '_' . $i] = $objWidget->getErrors();
                     $blnHasErrors                                = true;
                 }
             }
@@ -159,7 +159,7 @@ class MultiColumnEditor extends \Widget
         $objTemplate->ajaxDeleteUrl =
             TL_MODE == 'BE' ? \Environment::get('request') : AjaxAction::generateUrl(static::NAME, static::ACTION_DELETE_ROW);
 
-        $intRowCount = \Input::post('rowCount') ?: $intMinRowCount;
+        $intRowCount = \Input::post($strFieldName . '_rowCount') ?: $intMinRowCount;
         $strAction   = $strAction ?: \Input::post('action');
 
         // restore from entity
@@ -178,11 +178,11 @@ class MultiColumnEditor extends \Widget
             switch ($strAction)
             {
                 case static::ACTION_ADD_ROW:
-                    $arrValues = static::addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount);
+                    $arrValues = static::addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName);
                     break;
 
                 case static::ACTION_DELETE_ROW:
-                    $arrValues = static::deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount);
+                    $arrValues = static::deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
                     break;
             }
         }
@@ -191,18 +191,18 @@ class MultiColumnEditor extends \Widget
             switch ($strAction)
             {
                 case static::ACTION_ADD_ROW:
-                    $arrValues = static::addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount);
+                    $arrValues = static::addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName);
                     break;
 
                 case static::ACTION_DELETE_ROW:
-                    $arrValues = static::deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount);
+                    $arrValues = static::deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
                     break;
             }
         }
 
         // add row count field
         $objWidget = Widget::getFrontendFormField(
-            'rowCount',
+            $strFieldName . '_rowCount',
             [
                 'inputType' => 'hidden',
             ],
@@ -213,12 +213,12 @@ class MultiColumnEditor extends \Widget
 
         // add rows
         $objTemplate->editorFormAction = \Environment::get('request');
-        $objTemplate->rows             = static::generateRows($intRowCount, $arrDca, $strTable, $objDc, $arrValues, $arrErrors);
+        $objTemplate->rows             = static::generateRows($intRowCount, $arrDca, $strTable, $objDc, $arrValues, $arrErrors, $strFieldName);
 
         return $objTemplate->parse();
     }
 
-    public static function addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount)
+    public static function addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName)
     {
         if (!($intIndex = \Input::post('row')))
         {
@@ -226,7 +226,7 @@ class MultiColumnEditor extends \Widget
 
             foreach (array_keys($arrDca['fields']) as $strField)
             {
-                $arrRow[$strField] = null;
+                $arrRow[$strFieldName . '_' . $strField] = null;
             }
 
             $arrValues[] = $arrRow;
@@ -242,7 +242,7 @@ class MultiColumnEditor extends \Widget
 
             foreach (array_keys($arrDca['fields']) as $strField)
             {
-                $arrRow[$strField] = \Input::post($strField . '_' . $i);
+                $arrRow[$strFieldName . '_' . $strField] = \Input::post($strFieldName . '_' . $strField . '_' . $i);
             }
 
             $arrValues[] = $arrRow;
@@ -256,7 +256,7 @@ class MultiColumnEditor extends \Widget
         return $arrValues;
     }
 
-    public static function deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount)
+    public static function deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName)
     {
         if (!($intIndex = \Input::post('row')))
         {
@@ -276,7 +276,7 @@ class MultiColumnEditor extends \Widget
 
             foreach (array_keys($arrDca['fields']) as $strField)
             {
-                $arrRow[$strField] = \Input::post($strField . '_' . $i);
+                $arrRow[$strFieldName . '_' . $strField] = \Input::post($strFieldName . '_' . $strField . '_' . $i);
             }
 
             $arrValues[] = $arrRow;
@@ -285,7 +285,7 @@ class MultiColumnEditor extends \Widget
         return $arrValues;
     }
 
-    public static function generateRows($intRowCount, $arrDca, $strTable, $objDc, array $arrValues = [], $arrErrors = [])
+    public static function generateRows($intRowCount, $arrDca, $strTable, $objDc, array $arrValues = [], $arrErrors = [], $strFieldName)
     {
         $arrRows = [];
 
@@ -297,29 +297,114 @@ class MultiColumnEditor extends \Widget
             {
                 $strMethod = TL_MODE == 'FE' ? 'getFrontendFormField' : 'getBackendFormField';
 
-                if (!($objWidget = Widget::$strMethod($strField . '_' . $i, $arrData, null, $strField, $strTable, $objDc)))
+                if (!($objWidget = Widget::$strMethod($strFieldName . '_' . $strField . '_' . $i, $arrData, null, $strField, $strTable, $objDc)))
                 {
                     continue;
                 }
+
+                // add correct dca for bootstrapper since by normal behavior retrieval of the dca is impossible
+                $objWidget->arrDca = $arrData;
 
                 $objWidget->noIndex = $strField;
 
                 if (!empty($arrValues))
                 {
                     $objWidget->value = $arrValues[$i - 1][$strField];
+
+                    // date/time fields
+                    if ($arrData['eval']['rgxp'] == 'date')
+                    {
+                        $objWidget->value = \Date::parse(\Config::get('dateFormat'), $objWidget->value);
+                    }
+                    elseif ($arrData['eval']['rgxp'] == 'time')
+                    {
+                        $objWidget->value = \Date::parse(\Config::get('timeFormat'), $objWidget->value);
+                    }
+                    elseif ($arrData['eval']['rgxp'] == 'datim')
+                    {
+                        $objWidget->value = \Date::parse(\Config::get('datimFormat'), $objWidget->value);
+                    }
                 }
 
-                if (isset($arrErrors[$strField . '_' . $i]))
+                if (isset($arrErrors[$strFieldName . '_' . $strField . '_' . $i]))
                 {
-                    $objWidget->addError(implode('', $arrErrors[$strField . '_' . $i]));
+                    $objWidget->addError(implode('', $arrErrors[$strFieldName . '_' . $strField . '_' . $i]));
                 }
 
-                $arrFields[$strField . '_' . $i] = $objWidget;
+                static::handleSpecialFields($objWidget, $arrData, $strFieldName);
+
+                $arrFields[$strFieldName . '_' . $strField . '_' . $i] = $objWidget;
             }
 
             $arrRows[] = $arrFields;
         }
 
         return $arrRows;
+    }
+
+    public static function handleSpecialFields($objWidget, $arrData, $strField)
+    {
+        $wizard = '';
+
+        // Date picker
+        if ($arrData['eval']['datepicker'])
+        {
+            $rgxp = $arrData['eval']['rgxp'];
+            $format = \Date::formatToJs(\Config::get($rgxp.'Format'));
+
+            switch ($rgxp)
+            {
+                case 'datim':
+                    $time = ",\n      timePicker:true";
+                    break;
+
+                case 'time':
+                    $time = ",\n      pickOnly:\"time\"";
+                    break;
+
+                default:
+                    $time = '';
+                    break;
+            }
+
+            $wizard .= ' ' . \Image::getHtml('assets/mootools/datepicker/' . $GLOBALS['TL_ASSETS']['DATEPICKER'] . '/icon.gif', '', 'title="'.specialchars($GLOBALS['TL_LANG']['MSC']['datepicker']).'" id="toggle_' . $objWidget->id . '" style="vertical-align:-6px;cursor:pointer"') . '
+  <script>
+    window.addEvent("domready", function() {
+      new Picker.Date($("ctrl_' . $objWidget->id . '"), {
+        draggable: false,
+        toggle: $("toggle_' . $objWidget->id . '"),
+        format: "' . $format . '",
+        positionOffset: {x:-211,y:-209}' . $time . ',
+        pickerClass: "datepicker_bootstrap",
+        useFadeInOut: !Browser.ie,
+        startDay: ' . $GLOBALS['TL_LANG']['MSC']['weekOffset'] . ',
+        titleFormat: "' . $GLOBALS['TL_LANG']['MSC']['titleFormat'] . '"
+      });
+    });
+  </script>';
+        }
+
+        // Color picker
+        if ($arrData['eval']['colorpicker'])
+        {
+            // Support single fields as well (see #5240)
+            $strKey = $arrData['eval']['multiple'] ? $strField . '_0' : $strField;
+
+            $wizard .= ' ' . \Image::getHtml('pickcolor.gif', $GLOBALS['TL_LANG']['MSC']['colorpicker'], 'style="vertical-align:top;cursor:pointer" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['colorpicker']).'" id="moo_' . $strField . '"') . '
+  <script>
+    window.addEvent("domready", function() {
+      new MooRainbow("moo_' . $strField . '", {
+        id: "ctrl_' . $strKey . '",
+        startColor: ((cl = $("ctrl_' . $strKey . '").value.hexToRgb(true)) ? cl : [255, 0, 0]),
+        imgPath: "assets/mootools/colorpicker/' . $GLOBALS['TL_ASSETS']['COLORPICKER'] . '/images/",
+        onComplete: function(color) {
+          $("ctrl_' . $strKey . '").value = color.hex.replace("#", "");
+        }
+      });
+    });
+  </script>';
+        }
+
+        $objWidget->wizard = $wizard;
     }
 }

@@ -18,7 +18,7 @@
             function doAction($link, action) {
                 var formData = $link.closest('form').serializeArray(),
                     formDataNew = [],
-                    isFrontend = $wrapper.find('.multi-column-editor').hasClass('fe');
+                    isFrontend = $link.closest('.multi-column-editor-wrapper').find('.multi-column-editor').hasClass('fe');
 
                 // remove FORM_SUBMIT -> no submit callbacks should be fired
                 $.each(formData, function(index, item) {
@@ -28,8 +28,6 @@
                 });
 
                 formData = formDataNew;
-
-                console.log($link);
 
                 $.merge(formData, [
                     {
@@ -56,6 +54,8 @@
                     ]);
                 }
 
+                // console.log(formData);
+
                 $.post(
                     $link.attr('href'),
                     formData,
@@ -63,11 +63,12 @@
                     {
                         if (isFrontend)
                         {
-                            $wrapper.html(response.result.html);
+
+                            $link.closest('.multi-column-editor-wrapper').html(response.result.html);
                         }
                         else
                         {
-                            $wrapper.html(response);
+                            $link.closest('.multi-column-editor-wrapper').html(response);
                             MultiColumnEditor.initChosen();
                             Stylect.convertSelects();
                         }

@@ -34,11 +34,11 @@ $GLOBALS['TL_JAVASCRIPT']['multi_column_editor'] = 'system/modules/multi_column_
 $GLOBALS['AJAX'][\HeimrichHannot\MultiColumnEditor\MultiColumnEditor::NAME] = [
     'actions' => [
         \HeimrichHannot\MultiColumnEditor\MultiColumnEditor::ACTION_ADD_ROW => [
-            'arguments' => ['rowCount', 'row', 'field', 'table'],
+            'arguments' => ['.*_rowCount', '.*_row', 'field', 'table'],
             'optional'  => [],
         ],
         \HeimrichHannot\MultiColumnEditor\MultiColumnEditor::ACTION_DELETE_ROW => [
-            'arguments' => ['rowCount', 'row', 'field', 'table'],
+            'arguments' => ['.*_rowCount', '.*_row', 'field', 'table'],
             'optional'  => [],
         ]
     ],
