@@ -103,6 +103,8 @@ class MultiColumnEditor extends \Widget
             $this->blnSubmitInput = false;
         }
 
+        $varInput = static::unprefixValuesWithFieldName($varInput, $this->strName);
+
         return parent::validator(serialize($varInput));
     }
 
@@ -165,7 +167,7 @@ class MultiColumnEditor extends \Widget
         // restore from entity
         if ($varValue)
         {
-            $arrValues = deserialize($varValue, true);
+            $arrValues = static::prefixValuesWithFieldName(deserialize($varValue, true), $strFieldName);
         }
         else
         {
@@ -216,6 +218,44 @@ class MultiColumnEditor extends \Widget
         $objTemplate->rows             = static::generateRows($intRowCount, $arrDca, $strTable, $objDc, $arrValues, $arrErrors, $strFieldName);
 
         return $objTemplate->parse();
+    }
+
+    private static function prefixValuesWithFieldName(array $arrValues, $strFieldName)
+    {
+        $arrResult = [];
+
+        foreach ($arrValues as $arrValue)
+        {
+            $arrRow = [];
+
+            foreach ($arrValue as $strKey => $varValue)
+            {
+                $arrRow[$strFieldName . '_' . $strKey] = $varValue;
+            }
+
+            $arrResult[] = $arrRow;
+        }
+
+        return $arrResult;
+    }
+
+    private static function unprefixValuesWithFieldName(array $arrValues, $strFieldName)
+    {
+        $arrResult = [];
+
+        foreach ($arrValues as $arrValue)
+        {
+            $arrRow = [];
+
+            foreach ($arrValue as $strKey => $varValue)
+            {
+                $arrRow[str_replace($strFieldName, '', $strKey)] = $varValue;
+            }
+
+            $arrResult[] = $arrRow;
+        }
+
+        return $arrResult;
     }
 
     public static function addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName)
@@ -309,7 +349,7 @@ class MultiColumnEditor extends \Widget
 
                 if (!empty($arrValues))
                 {
-                    $objWidget->value = $arrValues[$i - 1][$strField];
+                    $objWidget->value = $arrValues[$i - 1][$strFieldName . '_' . $strField];
 
                     // date/time fields
                     if ($arrData['eval']['rgxp'] == 'date')
