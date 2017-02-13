@@ -1,10 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.5] - 2017-02-13
+
+### Fixed
+- fixed missing help text below fields
+
 ## [1.1.4] - 2017-02-09
 
 ### Fixed
-- fixed attribte naming leading to data not being saved
+- fixed attribute naming leading to data not being saved
 
 ## [1.1.3] - 2017-02-08
 

@@ -51,7 +51,9 @@ class MultiColumnEditor extends \Widget
             {
                 $strMethod = TL_MODE == 'FE' ? 'getFrontendFormField' : 'getBackendFormField';
 
-                if (!($objWidget = Widget::$strMethod($this->strName . '_' . $strField . '_' . $i, $arrData, null, $strField, $this->strTable, $this->objDca)))
+                if (!($objWidget =
+                    Widget::$strMethod($this->strName . '_' . $strField . '_' . $i, $arrData, null, $strField, $this->strTable, $this->objDca))
+                )
                 {
                     continue;
                 }
@@ -92,7 +94,7 @@ class MultiColumnEditor extends \Widget
                 {
                     // store the errors
                     $this->arrWidgetErrors[$this->strName . '_' . $strField . '_' . $i] = $objWidget->getErrors();
-                    $blnHasErrors                                = true;
+                    $blnHasErrors                                                       = true;
                 }
             }
         }
@@ -140,8 +142,16 @@ class MultiColumnEditor extends \Widget
         ) . '</div>';
     }
 
-    public static function generateEditorForm($strEditorTemplate, $strTable, $strFieldName, $varValue, $objDc, $arrDca = null, $arrErrors = [], $strAction = null)
-    {
+    public static function generateEditorForm(
+        $strEditorTemplate,
+        $strTable,
+        $strFieldName,
+        $varValue,
+        $objDc,
+        $arrDca = null,
+        $arrErrors = [],
+        $strAction = null
+    ) {
         if ($arrDca === null)
         {
             $arrDca = $GLOBALS['TL_DCA'][$strTable]['fields'][$strFieldName]['eval']['multiColumnEditor'];
@@ -371,7 +381,7 @@ class MultiColumnEditor extends \Widget
                     $objWidget->addError(implode('', $arrErrors[$strFieldName . '_' . $strField . '_' . $i]));
                 }
 
-                static::handleSpecialFields($objWidget, $arrData, $strFieldName);
+                static::handleSpecialFields($objWidget, $arrData, $strFieldName, $strTable);
 
                 $arrFields[$strFieldName . '_' . $strField . '_' . $i] = $objWidget;
             }
@@ -382,15 +392,15 @@ class MultiColumnEditor extends \Widget
         return $arrRows;
     }
 
-    public static function handleSpecialFields($objWidget, $arrData, $strField)
+    public static function handleSpecialFields($objWidget, $arrData, $strField, $strTable)
     {
         $wizard = '';
 
         // Date picker
         if ($arrData['eval']['datepicker'])
         {
-            $rgxp = $arrData['eval']['rgxp'];
-            $format = \Date::formatToJs(\Config::get($rgxp.'Format'));
+            $rgxp   = $arrData['eval']['rgxp'];
+            $format = \Date::formatToJs(\Config::get($rgxp . 'Format'));
 
             switch ($rgxp)
             {
@@ -407,7 +417,12 @@ class MultiColumnEditor extends \Widget
                     break;
             }
 
-            $wizard .= ' ' . \Image::getHtml('assets/mootools/datepicker/' . $GLOBALS['TL_ASSETS']['DATEPICKER'] . '/icon.gif', '', 'title="'.specialchars($GLOBALS['TL_LANG']['MSC']['datepicker']).'" id="toggle_' . $objWidget->id . '" style="vertical-align:-6px;cursor:pointer"') . '
+            $wizard .= ' ' . \Image::getHtml(
+                    'assets/mootools/datepicker/' . $GLOBALS['TL_ASSETS']['DATEPICKER'] . '/icon.gif',
+                    '',
+                    'title="' . specialchars($GLOBALS['TL_LANG']['MSC']['datepicker']) . '" id="toggle_' . $objWidget->id
+                    . '" style="vertical-align:-6px;cursor:pointer"'
+                ) . '
   <script>
     window.addEvent("domready", function() {
       new Picker.Date($("ctrl_' . $objWidget->id . '"), {
@@ -430,7 +445,13 @@ class MultiColumnEditor extends \Widget
             // Support single fields as well (see #5240)
             $strKey = $arrData['eval']['multiple'] ? $strField . '_0' : $strField;
 
-            $wizard .= ' ' . \Image::getHtml('pickcolor.gif', $GLOBALS['TL_LANG']['MSC']['colorpicker'], 'style="vertical-align:top;cursor:pointer" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['colorpicker']).'" id="moo_' . $strField . '"') . '
+            $wizard .= ' ' . \Image::getHtml(
+                    'pickcolor.gif',
+                    $GLOBALS['TL_LANG']['MSC']['colorpicker'],
+                    'style="vertical-align:top;cursor:pointer" title="' . specialchars(
+                        $GLOBALS['TL_LANG']['MSC']['colorpicker']
+                    ) . '" id="moo_' . $strField . '"'
+                ) . '
   <script>
     window.addEvent("domready", function() {
       new MooRainbow("moo_' . $strField . '", {
@@ -445,6 +466,20 @@ class MultiColumnEditor extends \Widget
   </script>';
         }
 
-        $objWidget->wizard = $wizard;
+        $strHelp = (!$objWidget->hasErrors() ? static::help($arrData) : '');
+
+        $objWidget->wizard = $strHelp ? $strHelp . $wizard : $wizard;
+    }
+
+    public static function help($arrData, $strClass = '')
+    {
+        $return = $arrData['label'][1];
+
+        if (!\Config::get('showHelp') || $arrData['inputType'] == 'password' || $return == '')
+        {
+            return '';
+        }
+
+        return '<p class="tl_help tl_tip' . $strClass . '">' . $return . '</p>';
     }
 }
