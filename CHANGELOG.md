@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.7] - 2017-03-17
+
+### Added
+- width defined in "eval['style']" is now also added to the "form-group"-div
+
+### Fixed
+- be css style
+
 ## [1.1.6] - 2017-03-17
 
 ### Added

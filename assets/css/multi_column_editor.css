@@ -21,10 +21,28 @@
 .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group input[type="password"] {
   padding: 3px;
 }
+.multi-column-editor-wrapper .multi-column-editor .mce-row .form-group > h3 > label,
+.multi-column-editor-wrapper .multi-column-editor .mce-row .form-group > .tl_help {
+  display: none;
+}
+.multi-column-editor-wrapper .multi-column-editor .mce-row .form-group > h3 {
+  padding-top: 0;
+}
+.multi-column-editor-wrapper .multi-column-editor .mce-row.row_1 .form-group > h3 > label,
+.multi-column-editor-wrapper .multi-column-editor .mce-row.row_1 .form-group > .tl_help {
+  display: block;
+}
+.multi-column-editor-wrapper .multi-column-editor .mce-row.row_1 .form-group > h3 {
+  padding-top: 14px;
+}
+.multi-column-editor-wrapper .multi-column-editor .mce-row.row_1 .actions {
+  margin-top: 30px;
+}
 .multi-column-editor-wrapper .multi-column-editor .mce-row .actions {
   display: block;
   float: left;
-  margin-top: 33px;
+  margin-top: 4px;
+  margin-left: 5px;
 }
 .multi-column-editor-wrapper + .tl_tip {
   clear: left;

@@ -18,7 +18,8 @@
                         <?php if ($objWidget->type == 'hidden'): ?>
                             <?= $objWidget->parse(); ?>
                         <?php else: ?>
-                            <div class="form-group <?= $strField ?>" data-name="<?= $objWidget->noIndex ?>">
+                            <div class="form-group <?= $strField ?>" data-name="<?= $objWidget->noIndex ?>"
+                            <?php if (strpos($objWidget->style, 'width') !== false && strpos($objWidget->style, 'px') !== false): ?> style="<?= $objWidget->style ?>"<?php endif; ?>>
                                 <?= $objWidget->parse(); ?>
                             </div>
                         <?php endif; ?>

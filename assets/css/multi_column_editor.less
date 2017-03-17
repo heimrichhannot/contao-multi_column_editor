@@ -25,12 +25,37 @@
                 input[type="text"], input[type="password"] {
                     padding: 3px;
                 }
+
+                > h3 > label, > .tl_help {
+                    display: none;
+                }
+
+                > h3 {
+                    padding-top: 0;
+                }
+            }
+
+            &.row_1 {
+                .form-group {
+                    > h3 > label, > .tl_help {
+                        display: block;
+                    }
+
+                    > h3 {
+                        padding-top: 14px;
+                    }
+                }
+
+                .actions {
+                    margin-top: 30px;
+                }
             }
 
             .actions {
                 display: block;
                 float: left;
-                margin-top: 33px;
+                margin-top: 4px;
+                margin-left: 5px;
             }
         }
     }
