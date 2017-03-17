@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.6] - 2017-03-17
+
+### Added
+- option "skipCopyValuesOnAdd"
+
 ## [1.1.5] - 2017-02-13
 
 ### Fixed

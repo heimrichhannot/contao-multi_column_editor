@@ -23,6 +23,8 @@ Use the inputType "multiColumnEditor" for your field.
             'minRowCount' => 2,
             // set to 0 if an infinite number of rows should be possible (default: 0)
             'maxRowCount' => 5,
+            // defaults to false
+            'skipCopyValuesOnAdd' => false,
             'fields' => array(
                 // place your fields here as you would normally in your DCA
                 // (sql is not required)

@@ -163,6 +163,7 @@ class MultiColumnEditor extends \Widget
         $objTemplate->class       = $arrDca['class'];
         $intMinRowCount           = isset($arrDca['minRowCount']) ? $arrDca['minRowCount'] : 1;
         $intMaxRowCount           = isset($arrDca['maxRowCount']) ? $arrDca['maxRowCount'] : 0;
+        $blnSkipCopyValuesOnAdd   = isset($arrDca['skipCopyValuesOnAdd']) ? $arrDca['skipCopyValuesOnAdd'] : false;
         $objTemplate->minRowCount = $intMinRowCount;
         $objTemplate->maxRowCount = $intMaxRowCount;
 
@@ -190,7 +191,7 @@ class MultiColumnEditor extends \Widget
             switch ($strAction)
             {
                 case static::ACTION_ADD_ROW:
-                    $arrValues = static::addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName);
+                    $arrValues = static::addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName, $blnSkipCopyValuesOnAdd);
                     break;
 
                 case static::ACTION_DELETE_ROW:
@@ -203,7 +204,7 @@ class MultiColumnEditor extends \Widget
             switch ($strAction)
             {
                 case static::ACTION_ADD_ROW:
-                    $arrValues = static::addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName);
+                    $arrValues = static::addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName, $blnSkipCopyValuesOnAdd);
                     break;
 
                 case static::ACTION_DELETE_ROW:
@@ -268,7 +269,7 @@ class MultiColumnEditor extends \Widget
         return $arrResult;
     }
 
-    public static function addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName)
+    public static function addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName, $blnSkipCopyValuesOnAdd = false)
     {
         if (!($intIndex = \Input::post('row')))
         {
@@ -299,6 +300,14 @@ class MultiColumnEditor extends \Widget
 
             if ($i == $intIndex && ($intMaxRowCount == 0 || ($intRowCount + 1 <= $intMaxRowCount)))
             {
+                if ($blnSkipCopyValuesOnAdd)
+                {
+                    foreach ($arrRow as $strField => &$varValue)
+                    {
+                        $varValue = '';
+                    }
+                }
+
                 $arrValues[] = $arrRow;
             }
         }
