@@ -477,7 +477,7 @@ class MultiColumnEditor extends \Widget
 
         $strHelp = (!$objWidget->hasErrors() ? static::help($arrData) : '');
 
-        $objWidget->wizard = $strHelp ? $strHelp . $wizard : $wizard;
+        $objWidget->wizard = $strHelp ? $wizard . $strHelp : $wizard;
     }
 
     public static function help($arrData, $strClass = '')

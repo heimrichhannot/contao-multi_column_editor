@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.8] - 2017-03-17
+
+### Fixed
+- be css style
+
 ## [1.1.7] - 2017-03-17
 
 ### Added

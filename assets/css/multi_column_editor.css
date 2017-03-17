@@ -36,13 +36,12 @@
   padding-top: 14px;
 }
 .multi-column-editor-wrapper .multi-column-editor .mce-row.row_1 .actions {
-  margin-top: 30px;
+  margin-top: 32px;
 }
 .multi-column-editor-wrapper .multi-column-editor .mce-row .actions {
   display: block;
   float: left;
-  margin-top: 4px;
-  margin-left: 5px;
+  margin-top: 5px;
 }
 .multi-column-editor-wrapper + .tl_tip {
   clear: left;
