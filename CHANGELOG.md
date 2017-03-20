@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.9] - 2017-03-20
+
+### Fixed
+- minified backend js and made static
+- be css style fix, added groupClass for dca widget eval configuration to address container around widgets
+
 ## [1.1.8] - 2017-03-17
 
 ### Fixed

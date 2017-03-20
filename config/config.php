@@ -26,20 +26,20 @@ if (TL_MODE == 'BE')
 /**
  * JS
  */
-$GLOBALS['TL_JAVASCRIPT']['multi_column_editor'] = 'system/modules/multi_column_editor/assets/js/jquery.multi_column_editor.js';
+$GLOBALS['TL_JAVASCRIPT']['multi_column_editor'] = 'system/modules/multi_column_editor/assets/js/jquery.multi_column_editor.min.js|static';
 
 /**
  * Ajax
  */
 $GLOBALS['AJAX'][\HeimrichHannot\MultiColumnEditor\MultiColumnEditor::NAME] = [
     'actions' => [
-        \HeimrichHannot\MultiColumnEditor\MultiColumnEditor::ACTION_ADD_ROW => [
+        \HeimrichHannot\MultiColumnEditor\MultiColumnEditor::ACTION_ADD_ROW    => [
             'arguments' => ['.*_rowCount', '.*_row', 'field', 'table'],
             'optional'  => [],
         ],
         \HeimrichHannot\MultiColumnEditor\MultiColumnEditor::ACTION_DELETE_ROW => [
             'arguments' => ['.*_rowCount', '.*_row', 'field', 'table'],
             'optional'  => [],
-        ]
+        ],
     ],
 ];
