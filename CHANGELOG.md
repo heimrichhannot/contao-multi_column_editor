@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.10] - 2017-06-08
+
+### Added
+- php 7 and contao 4 support
+
 ## [1.1.9] - 2017-03-20
 
 ### Fixed
