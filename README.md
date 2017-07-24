@@ -28,6 +28,11 @@ Use the inputType "multiColumnEditor" for your field.
             'fields' => array(
                 // place your fields here as you would normally in your DCA
                 // (sql is not required)
+                'field1' => [
+                	'label' => 'field 1'
+                	'inputType' => 'text',
+                	'eval' => ['groupStyle' => 'width:150px']
+                ]
             )
         )
     ),

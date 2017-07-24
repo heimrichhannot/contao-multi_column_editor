@@ -62,7 +62,10 @@
                         else {
                             $link.closest('.multi-column-editor-wrapper').html(response);
                             MultiColumnEditor.initChosen();
-                            Stylect.convertSelects();
+
+                            if (Stylect !== 'undefined') {
+                                Stylect.convertSelects();
+                            }
                         }
                     }
                 );
