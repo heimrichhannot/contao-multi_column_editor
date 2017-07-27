@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.13] - 2017-07-27
+
+## Fixed
+- heimrichhannot/contao-ajax dependency added
+
 ## [1.1.12] - 2017-07-27
 
 ### Fixed
