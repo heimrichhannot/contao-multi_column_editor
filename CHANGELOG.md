@@ -1,7 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [1.1.11] - 2017-06-24
+## [1.1.12] - 2017-07-27
+
+### Fixed
+- css for checkboxes
+
+## [1.1.11] - 2017-07-24
 
 ### Fixed
 - contao 4 support

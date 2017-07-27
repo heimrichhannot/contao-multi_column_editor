@@ -11,6 +11,12 @@
         .mce-row {
             clear: left;
 
+            &.row_1 {
+                .tl_checkbox_single_container {
+                    margin-top: 32px !important;
+                }
+            }
+
             .form-group {
                 display: block;
                 float: left;
@@ -18,12 +24,12 @@
                 position: relative;
                 margin-bottom: 10px;
 
-                .tl_checkbox_single_container {
-                    margin-top: 34px;
-                }
-
                 input[type="text"], input[type="password"] {
                     padding: 3px;
+                }
+
+                .tl_checkbox_single_container {
+                    margin-top: 6px;
                 }
 
                 > h3 > label, > .tl_help {
