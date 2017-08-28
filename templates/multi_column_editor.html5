@@ -18,7 +18,7 @@
                         <?php if ($objWidget->type == 'hidden'): ?>
                             <?= $objWidget->parse(); ?>
                         <?php else: ?>
-                            <div class="form-group <?= $strField ?>" data-name="<?= $objWidget->noIndex ?>"<?= $objWidget->groupStyle ? ' style="' . $objWidget->groupStyle .'"' : ''; ?>>
+                            <div class="form-group <?= $strField ?><?php if ($objWidget->datepicker): ?> wizard<?php endif; ?>" data-name="<?= $objWidget->noIndex ?>"<?= $objWidget->groupStyle ? ' style="' . $objWidget->groupStyle .'"' : ''; ?>>
                                 <?= $objWidget->parse(); ?>
                             </div>
                         <?php endif; ?>

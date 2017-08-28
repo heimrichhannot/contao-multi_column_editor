@@ -181,6 +181,10 @@ class MultiColumnEditor extends \Widget
                 case static::ACTION_DELETE_ROW:
                     $arrValues = static::deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
                     break;
+
+                case static::ACTION_SORT_ROWS:
+                    $arrValues = static::sortRows($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
+                    break;
             }
         } elseif (Ajax::isRelated(static::NAME)) {
             switch ($strAction) {
@@ -207,7 +211,7 @@ class MultiColumnEditor extends \Widget
 
         // add rows
         $objTemplate->editorFormAction = \Environment::get('request');
-        $objTemplate->rows             = static::generateRows($intRowCount, $arrDca, $strTable, $objDc, $arrValues, $arrErrors, $strFieldName, $strAction);
+        $objTemplate->rows             = static::generateRows($intRowCount, $arrDca, $strTable, $objDc, $arrValues, $arrErrors, $strFieldName);
 
         return $objTemplate->parse();
     }
@@ -310,10 +314,37 @@ class MultiColumnEditor extends \Widget
         return $arrValues;
     }
 
-    public static function generateRows($intRowCount, $arrDca, $strTable, $objDc, array $arrValues = [], $arrErrors = [], $strFieldName, $strAction)
+    public static function sortRows($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName)
+    {
+        if (\Input::post('action') != static::ACTION_SORT_ROWS || !($varNewIndices = \Input::post('newIndices'))) {
+            return $arrValues;
+        }
+
+        $arrNewIndices = explode(',', $varNewIndices);
+
+        if (empty($arrNewIndices))
+        {
+            return $arrValues;
+        }
+
+        $arrValues = [];
+
+        foreach ($arrNewIndices as $intIndex) {
+            $arrRow = [];
+
+            foreach (array_keys($arrDca['fields']) as $strField) {
+                $arrRow[$strFieldName . '_' . $strField] = \Input::post($strFieldName . '_' . $strField . '_' . $intIndex);
+            }
+
+            $arrValues[] = $arrRow;
+        }
+
+        return $arrValues;
+    }
+
+    public static function generateRows($intRowCount, $arrDca, $strTable, $objDc, array $arrValues = [], $arrErrors = [], $strFieldName)
     {
         $arrRows = [];
-        $blnSortingMode = ($strAction == static::ACTION_SORT_ROWS && ($intRow = \Input::post('row')) && ($intNewRow = \Input::post('newRow')));
 
         for ($i = 1; $i <= (empty($arrValues) ? $intRowCount : count($arrValues)); $i++) {
             $arrFields = [];
@@ -332,35 +363,17 @@ class MultiColumnEditor extends \Widget
 
                 if (!empty($arrValues)) {
                     $objWidget->value = $arrValues[$i - 1][$strFieldName . '_' . $strField];
-                }
 
-                if ($blnSortingMode)
-                {
-                    if ($i == $intRow)
+                    if (is_numeric($objWidget->value))
                     {
-                        $strProperty = $strFieldName . '_' . $strField . '_' . $intNewRow;
-                    }
-                    elseif ($i == $intNewRow)
-                    {
-                        $strProperty = $strFieldName . '_' . $strField . '_' . $intRow;
-                    }
-                    else
-                    {
-                        $strProperty = $strFieldName . '_' . $strField . '_' . $i;
-                    }
-
-                    $objWidget->value = \Input::post($strProperty);
-                }
-
-                if (!empty($arrValues) || $blnSortingMode)
-                {
-                    // date/time fields
-                    if ($arrData['eval']['rgxp'] == 'date') {
-                        $objWidget->value = \Date::parse(\Config::get('dateFormat'), $objWidget->value);
-                    } elseif ($arrData['eval']['rgxp'] == 'time') {
-                        $objWidget->value = \Date::parse(\Config::get('timeFormat'), $objWidget->value);
-                    } elseif ($arrData['eval']['rgxp'] == 'datim') {
-                        $objWidget->value = \Date::parse(\Config::get('datimFormat'), $objWidget->value);
+                        // date/time fields
+                        if ($arrData['eval']['rgxp'] == 'date') {
+                            $objWidget->value = \Date::parse(\Config::get('dateFormat'), $objWidget->value);
+                        } elseif ($arrData['eval']['rgxp'] == 'time') {
+                            $objWidget->value = \Date::parse(\Config::get('timeFormat'), $objWidget->value);
+                        } elseif ($arrData['eval']['rgxp'] == 'datim') {
+                            $objWidget->value = \Date::parse(\Config::get('datimFormat'), $objWidget->value);
+                        }
                     }
                 }
 

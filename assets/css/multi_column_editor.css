@@ -15,6 +15,8 @@
     vertical-align: top; }
     .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group input[type="text"], .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group input[type="password"] {
       width: 100% !important; }
+    .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group.wizard input[type="text"], .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group.wizard input[type="password"] {
+      width: 83% !important; }
     .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group .tl_checkbox_single_container {
       margin-top: 6px; }
     .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group > h3, .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group > .tl_help {

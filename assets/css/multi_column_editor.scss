@@ -28,6 +28,12 @@
           width: 100% !important;
         }
 
+        &.wizard {
+          input[type="text"], input[type="password"] {
+            width: 83% !important;
+          }
+        }
+
         .tl_checkbox_single_container {
           margin-top: 6px;
         }

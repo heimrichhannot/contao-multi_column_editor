@@ -67,8 +67,7 @@
 
                             HASTE_PLUS.call(callback);
 
-                            if ($('body[class*="version_4"]').length < 1)
-                            {
+                            if ($('body[class*="version_4"]').length < 1) {
                                 if (Stylect !== 'undefined') {
                                     Stylect.convertSelects();
                                 }
@@ -98,16 +97,31 @@
                     opacity: 0.6,
                     handle: '.drag-handle',
                     onComplete: function(row) {
+                        var newIndices = [],
+                            doPost = false;
+
+                        $(row).closest('.rows').find('.mce-row').each(function() {
+                            newIndices.push($(this).data('index'));
+
+                            if ($(this).data('index') != $(this).index() + 1)
+                            {
+                                doPost = true;
+                            }
+                        });
+
                         additionalData = [
                             {
-                                'name': 'newRow',
-                                'value': $(row).index() + 1,
+                                'name': 'newIndices',
+                                'value': newIndices.join(','),
                             },
                         ];
 
-                        doAction($(row), 'sortRows', additionalData, function() {
-                            makeSortable(selector);
-                        });
+                        if (doPost)
+                        {
+                            doAction($(row), 'sortRows', additionalData, function() {
+                                makeSortable(selector);
+                            });
+                        }
                     },
                 });
             };
