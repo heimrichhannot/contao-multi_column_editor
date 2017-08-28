@@ -11,15 +11,16 @@ use HeimrichHannot\Haste\Util\Widget;
 class MultiColumnEditor extends \Widget
 {
 
-    protected $blnSubmitInput    = true;
-    protected $blnForAttribute   = true;
-    protected $strTemplate       = 'be_multi_column_editor';
+    protected $blnSubmitInput = true;
+    protected $blnForAttribute = true;
+    protected $strTemplate = 'be_multi_column_editor';
     protected $strEditorTemplate = 'multi_column_editor';
     protected $arrDca;
-    protected $arrWidgetErrors   = [];
+    protected $arrWidgetErrors = [];
 
     const ACTION_ADD_ROW    = 'addRow';
     const ACTION_DELETE_ROW = 'deleteRow';
+    const ACTION_SORT_ROWS  = 'sortRows';
 
     const NAME = 'multicolumneditor';
 
@@ -30,8 +31,7 @@ class MultiColumnEditor extends \Widget
 
         parent::__construct($arrData);
 
-        if (TL_MODE == 'FE')
-        {
+        if (TL_MODE == 'FE') {
             Ajax::runActiveAction(static::NAME, static::ACTION_ADD_ROW, new MceAjax($this->objDca));
             Ajax::runActiveAction(static::NAME, static::ACTION_DELETE_ROW, new MceAjax($this->objDca));
         }
@@ -45,16 +45,13 @@ class MultiColumnEditor extends \Widget
         $intRowCount  = \Input::post($this->strName . '_' . 'rowCount');
         $blnHasErrors = false;
 
-        for ($i = 1; $i <= $intRowCount; $i++)
-        {
-            foreach ($this->arrDca['fields'] as $strField => $arrData)
-            {
+        for ($i = 1; $i <= $intRowCount; $i++) {
+            foreach ($this->arrDca['fields'] as $strField => $arrData) {
                 $strMethod = TL_MODE == 'FE' ? 'getFrontendFormField' : 'getBackendFormField';
 
                 if (!($objWidget =
                     Widget::$strMethod($this->strName . '_' . $strField . '_' . $i, $arrData, null, $strField, $this->strTable, $this->objDca))
-                )
-                {
+                ) {
                     continue;
                 }
 
@@ -63,24 +60,19 @@ class MultiColumnEditor extends \Widget
 
                 // Convert date formats into timestamps (check the eval setting first -> #3063)
                 $rgxp = $arrData['eval']['rgxp'];
-                if (($rgxp == 'date' || $rgxp == 'time' || $rgxp == 'datim') && $varValue != '')
-                {
+                if (($rgxp == 'date' || $rgxp == 'time' || $rgxp == 'datim') && $varValue != '') {
                     $objDate  = new \Date($varValue, $GLOBALS['TL_CONFIG'][$rgxp . 'Format']);
                     $varValue = $objDate->tstamp;
                 }
 
                 // Save callback
-                if (is_array($arrData['save_callback']))
-                {
-                    foreach ($arrData['save_callback'] as $callback)
-                    {
+                if (is_array($arrData['save_callback'])) {
+                    foreach ($arrData['save_callback'] as $callback) {
                         $this->import($callback[0]);
 
-                        try
-                        {
+                        try {
                             $varValue = $this->{$callback[0]}->{$callback[1]}($varValue, $this->objDca);
-                        } catch (\Exception $e)
-                        {
+                        } catch (\Exception $e) {
                             $objWidget->class = 'error';
                             $objWidget->addError($e->getMessage());
                         }
@@ -90,8 +82,7 @@ class MultiColumnEditor extends \Widget
                 $varInput[$i - 1][$strField] = $varValue;
 
                 // Do not submit if there are errors
-                if ($objWidget->hasErrors())
-                {
+                if ($objWidget->hasErrors()) {
                     // store the errors
                     $this->arrWidgetErrors[$this->strName . '_' . $strField . '_' . $i] = $objWidget->getErrors();
                     $blnHasErrors                                                       = true;
@@ -99,8 +90,7 @@ class MultiColumnEditor extends \Widget
             }
         }
 
-        if ($blnHasErrors)
-        {
+        if ($blnHasErrors) {
             $this->addError($GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['error']);
             $this->blnSubmitInput = false;
         }
@@ -118,28 +108,25 @@ class MultiColumnEditor extends \Widget
      */
     public function generate()
     {
-        if (TL_MODE == 'BE')
-        {
+        if (TL_MODE == 'BE') {
             $strTable     = $this->objDca->table;
             $strFieldName = $this->objDca->field;
             $varValue     = $this->objDca->value;
-        }
-        else
-        {
+        } else {
             $strTable     = $this->strTable;
             $strFieldName = $this->strName;
             $varValue     = $this->varValue;
         }
 
         return '<div class="multi-column-editor-wrapper">' . static::generateEditorForm(
-            $this->strEditorTemplate,
-            $strTable,
-            $strFieldName,
-            $varValue,
-            $this->objDca,
-            $this->arrDca,
-            $this->arrWidgetErrors
-        ) . '</div>';
+                $this->strEditorTemplate,
+                $strTable,
+                $strFieldName,
+                $varValue,
+                $this->objDca,
+                $this->arrDca,
+                $this->arrWidgetErrors
+            ) . '</div>';
     }
 
     public static function generateEditorForm(
@@ -152,8 +139,7 @@ class MultiColumnEditor extends \Widget
         $arrErrors = [],
         $strAction = null
     ) {
-        if ($arrDca === null)
-        {
+        if ($arrDca === null) {
             $arrDca = $GLOBALS['TL_DCA'][$strTable]['fields'][$strFieldName]['eval']['multiColumnEditor'];
         }
 
@@ -161,6 +147,7 @@ class MultiColumnEditor extends \Widget
         $objTemplate->fieldName   = $strFieldName;
         $objTemplate->table       = $strTable;
         $objTemplate->class       = $arrDca['class'];
+        $objTemplate->sortable    = $arrDca['sortable'];
         $intMinRowCount           = isset($arrDca['minRowCount']) ? $arrDca['minRowCount'] : 1;
         $intMaxRowCount           = isset($arrDca['maxRowCount']) ? $arrDca['maxRowCount'] : 0;
         $blnSkipCopyValuesOnAdd   = isset($arrDca['skipCopyValuesOnAdd']) ? $arrDca['skipCopyValuesOnAdd'] : false;
@@ -171,25 +158,22 @@ class MultiColumnEditor extends \Widget
         $objTemplate->ajaxAddUrl    = TL_MODE == 'BE' ? \Environment::get('request') : AjaxAction::generateUrl(static::NAME, static::ACTION_ADD_ROW);
         $objTemplate->ajaxDeleteUrl =
             TL_MODE == 'BE' ? \Environment::get('request') : AjaxAction::generateUrl(static::NAME, static::ACTION_DELETE_ROW);
+        $objTemplate->ajaxSortUrl   =
+            TL_MODE == 'BE' ? \Environment::get('request') : AjaxAction::generateUrl(static::NAME, static::ACTION_SORT_ROWS);
 
         $intRowCount = \Input::post($strFieldName . '_rowCount') ?: $intMinRowCount;
         $strAction   = $strAction ?: \Input::post('action');
 
         // restore from entity
-        if ($varValue)
-        {
+        if ($varValue) {
             $arrValues = static::prefixValuesWithFieldName(deserialize($varValue, true), $strFieldName);
-        }
-        else
-        {
+        } else {
             $arrValues = [];
         }
 
         // handle ajax requests
-        if (TL_MODE == 'BE' && \Environment::get('isAjaxRequest'))
-        {
-            switch ($strAction)
-            {
+        if (TL_MODE == 'BE' && \Environment::get('isAjaxRequest')) {
+            switch ($strAction) {
                 case static::ACTION_ADD_ROW:
                     $arrValues = static::addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName, $blnSkipCopyValuesOnAdd);
                     break;
@@ -198,11 +182,8 @@ class MultiColumnEditor extends \Widget
                     $arrValues = static::deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
                     break;
             }
-        }
-        elseif (Ajax::isRelated(static::NAME))
-        {
-            switch ($strAction)
-            {
+        } elseif (Ajax::isRelated(static::NAME)) {
+            switch ($strAction) {
                 case static::ACTION_ADD_ROW:
                     $arrValues = static::addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName, $blnSkipCopyValuesOnAdd);
                     break;
@@ -219,14 +200,14 @@ class MultiColumnEditor extends \Widget
             [
                 'inputType' => 'hidden',
             ],
-            count($arrValues) ?: $intMinRowCount
+            count($arrValues) ?: ($intRowCount ?: $intMinRowCount)
         );
 
         $objTemplate->rowCount = $objWidget;
 
         // add rows
         $objTemplate->editorFormAction = \Environment::get('request');
-        $objTemplate->rows             = static::generateRows($intRowCount, $arrDca, $strTable, $objDc, $arrValues, $arrErrors, $strFieldName);
+        $objTemplate->rows             = static::generateRows($intRowCount, $arrDca, $strTable, $objDc, $arrValues, $arrErrors, $strFieldName, $strAction);
 
         return $objTemplate->parse();
     }
@@ -235,12 +216,10 @@ class MultiColumnEditor extends \Widget
     {
         $arrResult = [];
 
-        foreach ($arrValues as $arrValue)
-        {
+        foreach ($arrValues as $arrValue) {
             $arrRow = [];
 
-            foreach ($arrValue as $strKey => $varValue)
-            {
+            foreach ($arrValue as $strKey => $varValue) {
                 $arrRow[$strFieldName . '_' . $strKey] = $varValue;
             }
 
@@ -254,12 +233,10 @@ class MultiColumnEditor extends \Widget
     {
         $arrResult = [];
 
-        foreach ($arrValues as $arrValue)
-        {
+        foreach ($arrValues as $arrValue) {
             $arrRow = [];
 
-            foreach ($arrValue as $strKey => $varValue)
-            {
+            foreach ($arrValue as $strKey => $varValue) {
                 $arrRow[str_replace($strFieldName, '', $strKey)] = $varValue;
             }
 
@@ -271,12 +248,10 @@ class MultiColumnEditor extends \Widget
 
     public static function addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName, $blnSkipCopyValuesOnAdd = false)
     {
-        if (!($intIndex = \Input::post('row')))
-        {
+        if (!($intIndex = \Input::post('row'))) {
             $arrRow = [];
 
-            foreach (array_keys($arrDca['fields']) as $strField)
-            {
+            foreach (array_keys($arrDca['fields']) as $strField) {
                 $arrRow[$strFieldName . '_' . $strField] = null;
             }
 
@@ -287,23 +262,18 @@ class MultiColumnEditor extends \Widget
 
         $arrValues = [];
 
-        for ($i = 1; $i <= $intRowCount; $i++)
-        {
+        for ($i = 1; $i <= $intRowCount; $i++) {
             $arrRow = [];
 
-            foreach (array_keys($arrDca['fields']) as $strField)
-            {
+            foreach (array_keys($arrDca['fields']) as $strField) {
                 $arrRow[$strFieldName . '_' . $strField] = \Input::post($strFieldName . '_' . $strField . '_' . $i);
             }
 
             $arrValues[] = $arrRow;
 
-            if ($i == $intIndex && ($intMaxRowCount == 0 || ($intRowCount + 1 <= $intMaxRowCount)))
-            {
-                if ($blnSkipCopyValuesOnAdd)
-                {
-                    foreach ($arrRow as $strField => &$varValue)
-                    {
+            if ($i == $intIndex && ($intMaxRowCount == 0 || ($intRowCount + 1 <= $intMaxRowCount))) {
+                if ($blnSkipCopyValuesOnAdd) {
+                    foreach ($arrRow as $strField => &$varValue) {
                         $varValue = '';
                     }
                 }
@@ -317,24 +287,20 @@ class MultiColumnEditor extends \Widget
 
     public static function deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName)
     {
-        if (!($intIndex = \Input::post('row')))
-        {
+        if (!($intIndex = \Input::post('row'))) {
             return $arrValues;
         }
 
         $arrValues = [];
 
-        for ($i = 1; $i <= $intRowCount; $i++)
-        {
-            if ($i == $intIndex && $intRowCount - 1 >= $intMinRowCount)
-            {
+        for ($i = 1; $i <= $intRowCount; $i++) {
+            if ($i == $intIndex && $intRowCount - 1 >= $intMinRowCount) {
                 continue;
             }
 
             $arrRow = [];
 
-            foreach (array_keys($arrDca['fields']) as $strField)
-            {
+            foreach (array_keys($arrDca['fields']) as $strField) {
                 $arrRow[$strFieldName . '_' . $strField] = \Input::post($strFieldName . '_' . $strField . '_' . $i);
             }
 
@@ -344,20 +310,18 @@ class MultiColumnEditor extends \Widget
         return $arrValues;
     }
 
-    public static function generateRows($intRowCount, $arrDca, $strTable, $objDc, array $arrValues = [], $arrErrors = [], $strFieldName)
+    public static function generateRows($intRowCount, $arrDca, $strTable, $objDc, array $arrValues = [], $arrErrors = [], $strFieldName, $strAction)
     {
         $arrRows = [];
+        $blnSortingMode = ($strAction == static::ACTION_SORT_ROWS && ($intRow = \Input::post('row')) && ($intNewRow = \Input::post('newRow')));
 
-        for ($i = 1; $i <= (empty($arrValues) ? $intRowCount : count($arrValues)); $i++)
-        {
+        for ($i = 1; $i <= (empty($arrValues) ? $intRowCount : count($arrValues)); $i++) {
             $arrFields = [];
 
-            foreach ($arrDca['fields'] as $strField => $arrData)
-            {
+            foreach ($arrDca['fields'] as $strField => $arrData) {
                 $strMethod = TL_MODE == 'FE' ? 'getFrontendFormField' : 'getBackendFormField';
 
-                if (!($objWidget = Widget::$strMethod($strFieldName . '_' . $strField . '_' . $i, $arrData, null, $strField, $strTable, $objDc)))
-                {
+                if (!($objWidget = Widget::$strMethod($strFieldName . '_' . $strField . '_' . $i, $arrData, null, $strField, $strTable, $objDc))) {
                     continue;
                 }
 
@@ -366,27 +330,41 @@ class MultiColumnEditor extends \Widget
 
                 $objWidget->noIndex = $strField;
 
-                if (!empty($arrValues))
-                {
+                if (!empty($arrValues)) {
                     $objWidget->value = $arrValues[$i - 1][$strFieldName . '_' . $strField];
+                }
 
+                if ($blnSortingMode)
+                {
+                    if ($i == $intRow)
+                    {
+                        $strProperty = $strFieldName . '_' . $strField . '_' . $intNewRow;
+                    }
+                    elseif ($i == $intNewRow)
+                    {
+                        $strProperty = $strFieldName . '_' . $strField . '_' . $intRow;
+                    }
+                    else
+                    {
+                        $strProperty = $strFieldName . '_' . $strField . '_' . $i;
+                    }
+
+                    $objWidget->value = \Input::post($strProperty);
+                }
+
+                if (!empty($arrValues) || $blnSortingMode)
+                {
                     // date/time fields
-                    if ($arrData['eval']['rgxp'] == 'date')
-                    {
+                    if ($arrData['eval']['rgxp'] == 'date') {
                         $objWidget->value = \Date::parse(\Config::get('dateFormat'), $objWidget->value);
-                    }
-                    elseif ($arrData['eval']['rgxp'] == 'time')
-                    {
+                    } elseif ($arrData['eval']['rgxp'] == 'time') {
                         $objWidget->value = \Date::parse(\Config::get('timeFormat'), $objWidget->value);
-                    }
-                    elseif ($arrData['eval']['rgxp'] == 'datim')
-                    {
+                    } elseif ($arrData['eval']['rgxp'] == 'datim') {
                         $objWidget->value = \Date::parse(\Config::get('datimFormat'), $objWidget->value);
                     }
                 }
 
-                if (isset($arrErrors[$strFieldName . '_' . $strField . '_' . $i]))
-                {
+                if (isset($arrErrors[$strFieldName . '_' . $strField . '_' . $i])) {
                     $objWidget->addError(implode('', $arrErrors[$strFieldName . '_' . $strField . '_' . $i]));
                 }
 
@@ -405,20 +383,19 @@ class MultiColumnEditor extends \Widget
     {
         $wizard = '';
 
-        // Date picker
         if ($arrData['eval']['datepicker'])
         {
-            $rgxp   = $arrData['eval']['rgxp'];
-            $format = \Date::formatToJs(\Config::get($rgxp . 'Format'));
+            $rgxp = $arrData['eval']['rgxp'];
+            $format = \Date::formatToJs(\Config::get($rgxp.'Format'));
 
             switch ($rgxp)
             {
                 case 'datim':
-                    $time = ",\n      timePicker:true";
+                    $time = ",\n        timePicker: true";
                     break;
 
                 case 'time':
-                    $time = ",\n      pickOnly:\"time\"";
+                    $time = ",\n        pickOnly: \"time\"";
                     break;
 
                 default:
@@ -426,12 +403,15 @@ class MultiColumnEditor extends \Widget
                     break;
             }
 
-            $wizard .= ' ' . \Image::getHtml(
-                    'assets/mootools/datepicker/' . $GLOBALS['TL_ASSETS']['DATEPICKER'] . '/icon.gif',
-                    '',
-                    'title="' . specialchars($GLOBALS['TL_LANG']['MSC']['datepicker']) . '" id="toggle_' . $objWidget->id
-                    . '" style="vertical-align:-6px;cursor:pointer"'
-                ) . '
+            $strOnSelect = '';
+
+            // Trigger the auto-submit function (see #8603)
+            if ($arrData['eval']['submitOnChange'])
+            {
+                $strOnSelect = ",\n        onSelect: function() { Backend.autoSubmit(\"" . $strTable . "\"); }";
+            }
+
+            $wizard .= ' ' . \Image::getHtml('assets/datepicker/images/icon.svg', '', 'title="'.\StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['datepicker']).'" id="toggle_' . $objWidget->id . '" style="cursor:pointer"') . '
   <script>
     window.addEvent("domready", function() {
       new Picker.Date($("ctrl_' . $objWidget->id . '"), {
@@ -440,7 +420,7 @@ class MultiColumnEditor extends \Widget
         format: "' . $format . '",
         positionOffset: {x:-211,y:-209}' . $time . ',
         pickerClass: "datepicker_bootstrap",
-        useFadeInOut: !Browser.ie,
+        useFadeInOut: !Browser.ie' . $strOnSelect . ',
         startDay: ' . $GLOBALS['TL_LANG']['MSC']['weekOffset'] . ',
         titleFormat: "' . $GLOBALS['TL_LANG']['MSC']['titleFormat'] . '"
       });
@@ -454,19 +434,14 @@ class MultiColumnEditor extends \Widget
             // Support single fields as well (see #5240)
             $strKey = $arrData['eval']['multiple'] ? $strField . '_0' : $strField;
 
-            $wizard .= ' ' . \Image::getHtml(
-                    'pickcolor.gif',
-                    $GLOBALS['TL_LANG']['MSC']['colorpicker'],
-                    'style="vertical-align:top;cursor:pointer" title="' . specialchars(
-                        $GLOBALS['TL_LANG']['MSC']['colorpicker']
-                    ) . '" id="moo_' . $strField . '"'
-                ) . '
+            $wizard .= ' ' . \Image::getHtml('pickcolor.svg', $GLOBALS['TL_LANG']['MSC']['colorpicker'], 'title="'.\StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['colorpicker']).'" id="moo_' . $strField . '" style="cursor:pointer"') . '
   <script>
     window.addEvent("domready", function() {
+      var cl = $("ctrl_' . $strKey . '").value.hexToRgb(true) || [255, 0, 0];
       new MooRainbow("moo_' . $strField . '", {
         id: "ctrl_' . $strKey . '",
-        startColor: ((cl = $("ctrl_' . $strKey . '").value.hexToRgb(true)) ? cl : [255, 0, 0]),
-        imgPath: "assets/mootools/colorpicker/' . $GLOBALS['TL_ASSETS']['COLORPICKER'] . '/images/",
+        startColor: cl,
+        imgPath: "assets/colorpicker/images/",
         onComplete: function(color) {
           $("ctrl_' . $strKey . '").value = color.hex.replace("#", "");
         }
@@ -484,8 +459,7 @@ class MultiColumnEditor extends \Widget
     {
         $return = $arrData['label'][1];
 
-        if (!\Config::get('showHelp') || $arrData['inputType'] == 'password' || $return == '')
-        {
+        if (!\Config::get('showHelp') || $arrData['inputType'] == 'password' || $return == '') {
             return '';
         }
 

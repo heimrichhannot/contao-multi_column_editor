@@ -18,6 +18,8 @@ Use the inputType "multiColumnEditor" for your field.
     'inputType' => 'multiColumnEditor',
     'eval'      => array(
         'multiColumnEditor' => array(
+            // set to true if the rows should be sortable (backend only atm)
+            'sortable' => false,
             'class' => 'some-class',
             // set to 0 if it should also be possible to have *no* row (default: 1)
             'minRowCount' => 2,

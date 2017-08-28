@@ -11,7 +11,7 @@
             </a>
         <?php endif; ?>
     <?php else: ?>
-        <div class="rows">
+        <div class="rows<?php if ($this->sortable): ?> sortable<?php endif; ?>">
             <?php foreach ($this->rows as $i => $arrRow): ?>
                 <div class="mce-row row_<?= ++$i ?>" data-index="<?= $i ?>">
                     <?php foreach ($arrRow as $strField => $objWidget): ?>
@@ -25,13 +25,31 @@
                     <?php endforeach; ?>
                     <div class="actions">
                         <?php if (TL_MODE == 'BE'): ?>
-                            <a href="<?= $this->ajaxAddUrl ?>" class="add">
-                                <img src="/system/themes/flexible/images/copy.gif">
+                            <a href="<?= $this->ajaxAddUrl ?>" class="add" title="<?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['add'] ?>">
+                                <?php if (version_compare(VERSION, '4.0', '<')): ?>
+                                    <img src="/system/themes/flexible/images/copy.gif">
+                                <?php else: ?>
+                                    <img src="/system/themes/flexible/icons/copy.svg" width="16" height="16">
+                                <?php endif; ?>
                             </a>
 
-                            <a href="<?= $this->ajaxDeleteUrl ?>" class="delete">
-                                <img src="/system/themes/flexible/images/delete.gif">
+                            <a href="<?= $this->ajaxDeleteUrl ?>" class="delete" title="<?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['delete'] ?>">
+                                <?php if (version_compare(VERSION, '4.0', '<')): ?>
+                                    <img src="/system/themes/flexible/images/delete.gif">
+                                <?php else: ?>
+                                    <img src="/system/themes/flexible/icons/delete.svg" width="16" height="16">
+                                <?php endif; ?>
                             </a>
+
+                            <?php if ($this->sortable): ?>
+                                <a class="drag-handle" href="<?= $this->ajaxSortUrl ?>" title="<?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['sort'] ?>">
+                                    <?php if (version_compare(VERSION, '4.0', '<')): ?>
+                                        <img src="/system/themes/flexible/images/drag.gif">
+                                    <?php else: ?>
+                                        <img src="/system/themes/flexible/icons/drag.svg" width="16" height="16" alt="">
+                                    <?php endif; ?>
+                                </a>
+                            <?php endif; ?>
                         <?php else: ?>
                             <a href="<?= $this->ajaxAddUrl ?>" class="add btn btn-primary btn-xs">
                                 <i class="fa fa-plus"></i>&nbsp;&nbsp;<?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['add'] ?>

@@ -6,31 +6,33 @@
 .multi-column-editor-wrapper .multi-column-editor .mce-row {
   clear: left; }
   .multi-column-editor-wrapper .multi-column-editor .mce-row.row_1 .tl_checkbox_single_container {
-    margin-top: 32px !important; }
+    margin-top: 39px !important; }
   .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group {
-    display: block;
-    float: left;
+    display: inline-block;
     margin-right: 10px;
     position: relative;
-    margin-bottom: 10px; }
+    margin-bottom: 10px;
+    vertical-align: top; }
     .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group input[type="text"], .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group input[type="password"] {
-      padding: 3px; }
+      width: 100% !important; }
     .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group .tl_checkbox_single_container {
       margin-top: 6px; }
-    .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group > h3 > label, .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group > .tl_help {
+    .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group > h3, .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group > .tl_help {
       display: none; }
     .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group > h3 {
       padding-top: 0; }
-  .multi-column-editor-wrapper .multi-column-editor .mce-row.row_1 .form-group > h3 > label, .multi-column-editor-wrapper .multi-column-editor .mce-row.row_1 .form-group > .tl_help {
-    display: block; }
+  .multi-column-editor-wrapper .multi-column-editor .mce-row.row_1 .form-group > h3, .multi-column-editor-wrapper .multi-column-editor .mce-row.row_1 .form-group > .tl_help {
+    display: inline-block; }
   .multi-column-editor-wrapper .multi-column-editor .mce-row.row_1 .form-group > h3 {
     padding-top: 14px; }
   .multi-column-editor-wrapper .multi-column-editor .mce-row.row_1 .actions {
-    margin-top: 32px; }
+    margin-top: 39px; }
   .multi-column-editor-wrapper .multi-column-editor .mce-row .actions {
-    display: block;
-    float: left;
-    margin-top: 5px; }
+    display: inline-block;
+    margin-top: 8px; }
+    .multi-column-editor-wrapper .multi-column-editor .mce-row .actions .drag-handle {
+      background: none;
+      border: none; }
 .multi-column-editor-wrapper + .tl_tip {
   clear: left; }
 

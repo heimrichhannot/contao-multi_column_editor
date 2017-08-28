@@ -2,20 +2,18 @@
 
 namespace HeimrichHannot\MultiColumnEditor;
 
-
-use HeimrichHannot\Haste\Dca\General;
-
 class Hooks extends \Controller
 {
 
     public function executePostActionsHook($strAction, \DataContainer $objDc)
     {
-        if ($strAction == MultiColumnEditor::ACTION_ADD_ROW || $strAction == MultiColumnEditor::ACTION_DELETE_ROW)
-        {
+        if ($strAction == MultiColumnEditor::ACTION_ADD_ROW || $strAction == MultiColumnEditor::ACTION_DELETE_ROW ||
+            $strAction == MultiColumnEditor::ACTION_SORT_ROWS
+        ) {
             $objDc->field = \Input::post('field');
+            $objDc->table = \Input::post('table');
 
-            if (!$objDc->field)
-            {
+            if (!$objDc->field) {
                 header('HTTP/1.1 400 Bad Request');
                 die('Bad Request');
             }

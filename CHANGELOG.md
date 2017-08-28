@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2017-08-28
+
+## Added
+- sortable flag in order to make the rows of the widget sortable (currently backend only, frontend to come)
+- Contao 4 icons
+
 ## [1.1.13] - 2017-07-27
 
 ## Fixed
