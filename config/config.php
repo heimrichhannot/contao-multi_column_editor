@@ -14,12 +14,12 @@ $GLOBALS['TL_FFL']['multiColumnEditor'] = 'HeimrichHannot\MultiColumnEditor\Form
  * Hooks
  */
 $GLOBALS['TL_HOOKS']['executePostActions']['multiColumnEditor'] = ['HeimrichHannot\MultiColumnEditor\Hooks', 'executePostActionsHook'];
+$GLOBALS['TL_HOOKS']['loadDataContainer']['multiColumnEditor']  = ['HeimrichHannot\MultiColumnEditor\Hooks', 'loadDataContainerHook'];
 
 /**
  * CSS
  */
-if (TL_MODE == 'BE')
-{
+if (TL_MODE == 'BE') {
     $GLOBALS['TL_CSS']['multi_column_editor'] = 'system/modules/multi_column_editor/assets/css/multi_column_editor.css';
 }
 
