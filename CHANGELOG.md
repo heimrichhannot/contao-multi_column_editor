@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.3] - 2017-08-30
+
+## Fixed
+- return `HTTP/1.1 400 Bad Request` only if action belongs to `Hooks::executePostActionsHook`
+
 ## [1.2.2] - 2017-08-30
 
 ## Added
