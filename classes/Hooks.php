@@ -25,7 +25,7 @@ class Hooks extends \Controller
     public function loadDataContainerHook($strTable)
     {
         // support for jumpTo fields -> bypass check in \Contao\Ajax -> comment "The field does not exist" line 282
-        if (\Input::post('action') != 'reloadPagetree' || $strTable === 'fieldpalette') {
+        if ((\Input::post('action') != 'reloadPagetree' && \Input::post('action') != 'reloadFiletree') || $strTable === 'fieldpalette') {
             return;
         }
 

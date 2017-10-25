@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.2] - 2017-10-25
+
+## Added
+- support for the inputType "fileTree"
+
 ## [1.2.3] - 2017-08-30
 
 ## Fixed
