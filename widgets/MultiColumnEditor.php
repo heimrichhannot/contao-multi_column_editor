@@ -204,7 +204,7 @@ class MultiColumnEditor extends \Widget
             [
                 'inputType' => 'hidden',
             ],
-            count($arrValues) ?: ($intRowCount ?: $intMinRowCount)
+            count($arrValues)
         );
 
         $objTemplate->rowCount = $objWidget;
