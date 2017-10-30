@@ -1,12 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [1.2.3] - 2017-10-30
+## [1.2.5] - 2017-10-30
 
 ## Fixed
 - min row count
 
-## [1.2.2] - 2017-10-25
+## [1.2.4] - 2017-10-25
 
 ## Added
 - support for the inputType "fileTree"
