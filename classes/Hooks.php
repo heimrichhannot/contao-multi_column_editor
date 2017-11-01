@@ -24,6 +24,11 @@ class Hooks extends \Controller
 
     public function loadDataContainerHook($strTable)
     {
+        if ($GLOBALS['TL_DCA'][$strTable]['fields'][\Input::post('name')]['inputType'] !== 'multiColumnEditor')
+        {
+            return;
+        }
+
         // support for jumpTo fields -> bypass check in \Contao\Ajax -> comment "The field does not exist" line 282
         if ((\Input::post('action') != 'reloadPagetree' && \Input::post('action') != 'reloadFiletree') || $strTable === 'fieldpalette') {
             return;

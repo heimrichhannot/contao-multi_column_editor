@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.6] - 2017-11-01
+
+## Fixed
+- limited ajax support for tree widgets to mce
+
 ## [1.2.5] - 2017-10-30
 
 ## Fixed
