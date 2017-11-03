@@ -199,12 +199,21 @@ class MultiColumnEditor extends \Widget
         }
 
         // add row count field
+        $intCount = count($arrValues);
+
+        if ($intCount < $intMinRowCount)
+        {
+            $intCount = $intMinRowCount;
+        } elseif ($intCount > $intMaxRowCount) {
+            $intCount = $intMaxRowCount;
+        }
+
         $objWidget = Widget::getFrontendFormField(
             $strFieldName . '_rowCount',
             [
                 'inputType' => 'hidden',
             ],
-            count($arrValues)
+            $intCount
         );
 
         $objTemplate->rowCount = $objWidget;

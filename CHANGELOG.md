@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.7] - 2017-11-03
+
+## Fixed
+- min and max row count
+
 ## [1.2.6] - 2017-11-01
 
 ## Fixed
