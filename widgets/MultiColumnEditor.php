@@ -201,10 +201,12 @@ class MultiColumnEditor extends \Widget
         // add row count field
         $intCount = count($arrValues);
 
-        if ($intCount < $intMinRowCount)
+        if ($intMinRowCount && $intCount < $intMinRowCount || $intCount < 0)
         {
             $intCount = $intMinRowCount;
-        } elseif ($intCount > $intMaxRowCount) {
+        }
+
+        if ($intMaxRowCount && $intCount > $intMaxRowCount) {
             $intCount = $intMaxRowCount;
         }
 
