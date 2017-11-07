@@ -77,6 +77,20 @@
                 );
             }
 
+            $('body').on('click', '.multi-column-editor .add', function(e) {
+                var $link = $(this);
+
+                e.preventDefault();
+
+                doAction($link, 'addRow');
+            }).on('click', '.multi-column-editor .delete', function(e) {
+                var $link = $(this);
+
+                e.preventDefault();
+
+                doAction($link, 'deleteRow');
+            });
+
             function makeSortable(selector) {
                 new Sortables(selector, {
                     constrain: true,
