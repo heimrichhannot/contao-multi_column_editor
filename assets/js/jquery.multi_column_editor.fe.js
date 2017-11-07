@@ -90,43 +90,6 @@
 
                 doAction($link, 'deleteRow');
             });
-
-            function makeSortable(selector) {
-                new Sortables(selector, {
-                    constrain: true,
-                    opacity: 0.6,
-                    handle: '.drag-handle',
-                    onComplete: function(row) {
-                        var newIndices = [],
-                            doPost = false;
-
-                        $(row).closest('.rows').find('.mce-row').each(function() {
-                            newIndices.push($(this).data('index'));
-
-                            if ($(this).data('index') != $(this).index() + 1)
-                            {
-                                doPost = true;
-                            }
-                        });
-
-                        additionalData = [
-                            {
-                                'name': 'newIndices',
-                                'value': newIndices.join(','),
-                            },
-                        ];
-
-                        if (doPost)
-                        {
-                            doAction($(row), 'sortRows', additionalData, function() {
-                                makeSortable(selector);
-                            });
-                        }
-                    },
-                });
-            };
-
-            makeSortable('.multi-column-editor-wrapper .sortable');
         },
     };
 

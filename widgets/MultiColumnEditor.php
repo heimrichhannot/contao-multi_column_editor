@@ -6,6 +6,7 @@ namespace HeimrichHannot\MultiColumnEditor;
 use HeimrichHannot\Ajax\Ajax;
 use HeimrichHannot\Ajax\AjaxAction;
 use HeimrichHannot\FormHybrid\FormAjax;
+use HeimrichHannot\Haste\Util\Container;
 use HeimrichHannot\Haste\Util\Widget;
 
 class MultiColumnEditor extends \Widget
@@ -31,7 +32,7 @@ class MultiColumnEditor extends \Widget
 
         parent::__construct($arrData);
 
-        if (TL_MODE == 'FE') {
+        if (Container::isFrontend()) {
             Ajax::runActiveAction(static::NAME, static::ACTION_ADD_ROW, new MceAjax($this->objDca));
             Ajax::runActiveAction(static::NAME, static::ACTION_DELETE_ROW, new MceAjax($this->objDca));
         }
@@ -47,7 +48,7 @@ class MultiColumnEditor extends \Widget
 
         for ($i = 1; $i <= $intRowCount; $i++) {
             foreach ($this->arrDca['fields'] as $strField => $arrData) {
-                $strMethod = TL_MODE == 'FE' ? 'getFrontendFormField' : 'getBackendFormField';
+                $strMethod = Container::isFrontend() ? 'getFrontendFormField' : 'getBackendFormField';
 
                 if (!($objWidget =
                     Widget::$strMethod($this->strName . '_' . $strField . '_' . $i, $arrData, null, $strField, $this->strTable, $this->objDca))
@@ -108,7 +109,7 @@ class MultiColumnEditor extends \Widget
      */
     public function generate()
     {
-        if (TL_MODE == 'BE') {
+        if (Container::isBackend()) {
             $strTable     = $this->objDca->table;
             $strFieldName = $this->objDca->field;
             $varValue     = $this->objDca->value;
@@ -155,11 +156,11 @@ class MultiColumnEditor extends \Widget
         $objTemplate->maxRowCount = $intMaxRowCount;
 
         // actions
-        $objTemplate->ajaxAddUrl    = TL_MODE == 'BE' ? \Environment::get('request') : AjaxAction::generateUrl(static::NAME, static::ACTION_ADD_ROW);
+        $objTemplate->ajaxAddUrl    = Container::isBackend() ? \Environment::get('request') : AjaxAction::generateUrl(static::NAME, static::ACTION_ADD_ROW);
         $objTemplate->ajaxDeleteUrl =
-            TL_MODE == 'BE' ? \Environment::get('request') : AjaxAction::generateUrl(static::NAME, static::ACTION_DELETE_ROW);
+            Container::isBackend() ? \Environment::get('request') : AjaxAction::generateUrl(static::NAME, static::ACTION_DELETE_ROW);
         $objTemplate->ajaxSortUrl   =
-            TL_MODE == 'BE' ? \Environment::get('request') : AjaxAction::generateUrl(static::NAME, static::ACTION_SORT_ROWS);
+            Container::isBackend() ? \Environment::get('request') : AjaxAction::generateUrl(static::NAME, static::ACTION_SORT_ROWS);
 
         $intRowCount = \Input::post($strFieldName . '_rowCount') ?: $intMinRowCount;
         $strAction   = $strAction ?: \Input::post('action');
@@ -172,7 +173,7 @@ class MultiColumnEditor extends \Widget
         }
 
         // handle ajax requests
-        if (TL_MODE == 'BE' && \Environment::get('isAjaxRequest')) {
+        if (Container::isBackend() && \Environment::get('isAjaxRequest')) {
             switch ($strAction) {
                 case static::ACTION_ADD_ROW:
                     $arrValues = static::addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName, $blnSkipCopyValuesOnAdd);
@@ -361,7 +362,7 @@ class MultiColumnEditor extends \Widget
             $arrFields = [];
 
             foreach ($arrDca['fields'] as $strField => $arrData) {
-                $strMethod = TL_MODE == 'FE' ? 'getFrontendFormField' : 'getBackendFormField';
+                $strMethod = Container::isFrontend() ? 'getFrontendFormField' : 'getBackendFormField';
 
                 if (!($objWidget = Widget::$strMethod($strFieldName . '_' . $strField . '_' . $i, $arrData, null, $strField, $strTable, $objDc))) {
                     continue;

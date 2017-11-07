@@ -19,14 +19,20 @@ $GLOBALS['TL_HOOKS']['loadDataContainer']['multiColumnEditor']  = ['HeimrichHann
 /**
  * CSS
  */
-if (TL_MODE == 'BE') {
+if (\HeimrichHannot\Haste\Util\Container::isBackend()) {
     $GLOBALS['TL_CSS']['multi_column_editor'] = 'system/modules/multi_column_editor/assets/css/multi_column_editor.css';
 }
 
 /**
  * JS
  */
-$GLOBALS['TL_JAVASCRIPT']['multi_column_editor'] = 'system/modules/multi_column_editor/assets/js/jquery.multi_column_editor.min.js|static';
+if (\HeimrichHannot\Haste\Util\Container::isBackend()) {
+    $GLOBALS['TL_JAVASCRIPT']['multi_column_editor'] = 'system/modules/multi_column_editor/assets/js/jquery.multi_column_editor.be.min.js|static';
+}
+else
+{
+    $GLOBALS['TL_JAVASCRIPT']['multi_column_editor'] = 'system/modules/multi_column_editor/assets/js/jquery.multi_column_editor.fe.min.js|static';
+}
 
 /**
  * Ajax

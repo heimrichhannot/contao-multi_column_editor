@@ -1,9 +1,9 @@
-<div class="multi-column-editor<?php if ($this->class): ?> <?= $this->class ?><?php endif; ?><?php if (TL_MODE == 'FE'): ?> fe<?php endif; ?>"
+<div class="multi-column-editor<?php if ($this->class): ?> <?= $this->class ?><?php endif; ?><?php if (\HeimrichHannot\Haste\Util\Container::isFrontend()): ?> fe<?php endif; ?>"
      data-field="<?= $this->fieldName ?>" data-table="<?= $this->table ?>" data-min-row-count="<?= $this->minRowCount ?>" data-max-row-count="<?= $this->maxRowCount ?>">
     <?= $this->rowCount->parse(); ?>
 
     <?php if (!$this->rowCount->value): ?>
-        <?php if (TL_MODE == 'BE'): ?>
+        <?php if (\HeimrichHannot\Haste\Util\Container::isBackend()): ?>
             <a href="<?= $this->ajaxAddUrl ?>" class="add first tl_submit"><?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['add']; ?></a>
         <?php else: ?>
             <a href="<?= $this->ajaxAddUrl ?>" class="add first btn btn-primary">
@@ -24,7 +24,7 @@
                         <?php endif; ?>
                     <?php endforeach; ?>
                     <div class="actions">
-                        <?php if (TL_MODE == 'BE'): ?>
+                        <?php if (\HeimrichHannot\Haste\Util\Container::isBackend()): ?>
                             <a href="<?= $this->ajaxAddUrl ?>" class="add" title="<?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['add'] ?>">
                                 <?php if (version_compare(VERSION, '4.0', '<')): ?>
                                     <img src="/system/themes/flexible/images/copy.gif">
