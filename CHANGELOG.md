@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [1.2.10] - 2017-11-17
+## [1.2.11] - 2017-11-17
 
 ## Fixed
 - ajax bug
