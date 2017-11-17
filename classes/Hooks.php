@@ -24,7 +24,14 @@ class Hooks extends \Controller
 
     public function loadDataContainerHook($strTable)
     {
-        if ($GLOBALS['TL_DCA'][$strTable]['fields'][\Input::post('name')]['inputType'] !== 'multiColumnEditor')
+        if (!\Input::post('name'))
+        {
+            return;
+        }
+
+        $arrParts = explode('_', \Input::post('name'));
+
+        if (empty($arrParts) || $GLOBALS['TL_DCA'][$strTable]['fields'][$arrParts[0]]['inputType'] !== 'multiColumnEditor')
         {
             return;
         }
