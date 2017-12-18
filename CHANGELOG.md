@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [1.2.12] - 2017-12-18
+## [1.3.0] - 2017-12-18
 
 ## Fixed
 - post data issue
