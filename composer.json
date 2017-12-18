@@ -1,36 +1,45 @@
 {
-    "name": "heimrichhannot/contao-multi_column_editor",
-    "description":"This module offers an input type for editing one or more records in frontend and backend.",
-    "keywords":["contao", "multi", "column", "wizard", "editor", "edit"],
-    "type": "contao-module",
-    "homepage":"https://bitbucket.org/heimrichhannot/contao-multi_column_editor",
-    "license":"LGPL-3.0+",
-    "authors":[
-        {
-            "name":"Heimrich & Hannot",
-            "email":"digitales@heimrich-hannot.de",
-            "homepage":"http://www.heimrich-hannot.de",
-            "role":"Developer"
-        }
-    ],
-    "support":{
-        "issues":"https://bitbucket.org/heimrichhannot/contao-multi_column_editor/issues"
-    },
-    "require": {
-        "php": "~5.4 || ~7.0",
-        "contao/core-bundle": "^3.5.1 || ~4.1",
-        "contao-community-alliance/composer-plugin": "~2.4 || ~3.0",
-        "heimrichhannot/contao-haste_plus": "^1.5",
-	"heimrichhannot/contao-ajax": "~1.1"
-	},
-    "autoload": {
-        "classmap": [""]
-    },
-    "extra": {
-        "contao": {
-            "sources": {
-                "": "system/modules/multi_column_editor"
-            }
-        }
+  "name": "heimrichhannot/contao-multi_column_editor",
+  "description": "This module offers an input type for editing one or more records in frontend and backend.",
+  "keywords": [
+    "contao",
+    "multi",
+    "column",
+    "wizard",
+    "editor",
+    "edit"
+  ],
+  "type": "contao-module",
+  "homepage": "https://bitbucket.org/heimrichhannot/contao-multi_column_editor",
+  "license": "LGPL-3.0+",
+  "authors": [
+    {
+      "name": "Heimrich & Hannot",
+      "email": "digitales@heimrich-hannot.de",
+      "homepage": "http://www.heimrich-hannot.de",
+      "role": "Developer"
     }
+  ],
+  "support": {
+    "issues": "https://bitbucket.org/heimrichhannot/contao-multi_column_editor/issues"
+  },
+  "require": {
+    "php": "~5.4 || ~7.0",
+    "contao/core-bundle": "^3.5.1 || ~4.1",
+    "contao-community-alliance/composer-plugin": "~2.4 || ~3.0",
+    "heimrichhannot/contao-haste_plus": "^1.5",
+    "heimrichhannot/contao-ajax": "~1.1"
+  },
+  "autoload": {
+    "classmap": [
+      ""
+    ]
+  },
+  "extra": {
+    "contao": {
+      "sources": {
+        "": "system/modules/multi_column_editor"
+      }
+    }
+  }
 }

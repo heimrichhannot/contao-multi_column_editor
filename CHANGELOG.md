@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.12] - 2017-12-18
+
+## Fixed
+- post data issue
+
+### Changed
+- switched post data retrieval to heimrichhannot/contao-request for security reasons
+
 ## [1.2.11] - 2017-11-17
 
 ## Fixed

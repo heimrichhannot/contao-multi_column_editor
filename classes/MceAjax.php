@@ -5,6 +5,7 @@ namespace HeimrichHannot\MultiColumnEditor;
 
 use HeimrichHannot\Ajax\Response\ResponseData;
 use HeimrichHannot\Ajax\Response\ResponseSuccess;
+use HeimrichHannot\Request\Request;
 
 class MceAjax
 {
@@ -27,8 +28,8 @@ class MceAjax
 
     public function doAction($strAction)
     {
-        $strField = \Input::post('field');
-        $strTable = \Input::post('table');
+        $strField = Request::getPost('field');
+        $strTable = Request::getPost('table');
         $varValue = $this->objDc->activeRecord->{$strField};
 
         if (!$strField || !$strTable)

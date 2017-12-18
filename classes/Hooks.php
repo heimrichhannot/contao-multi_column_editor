@@ -2,6 +2,8 @@
 
 namespace HeimrichHannot\MultiColumnEditor;
 
+use HeimrichHannot\Request\Request;
+
 class Hooks extends \Controller
 {
     public function executePostActionsHook($strAction, \DataContainer $objDc)
@@ -10,8 +12,8 @@ class Hooks extends \Controller
             $strAction == MultiColumnEditor::ACTION_SORT_ROWS
         ) {
 
-            $objDc->field = \Input::post('field');
-            $objDc->table = \Input::post('table');
+            $objDc->field = Request::getPost('field');
+            $objDc->table = Request::getPost('table');
 
             if (!$objDc->field || !$objDc->table) {
                 header('HTTP/1.1 400 Bad Request');
@@ -24,12 +26,12 @@ class Hooks extends \Controller
 
     public function loadDataContainerHook($strTable)
     {
-        if (!\Input::post('name'))
+        if (!Request::getPost('name'))
         {
             return;
         }
 
-        $arrParts = explode('_', \Input::post('name'));
+        $arrParts = explode('_', Request::getPost('name'));
 
         if (empty($arrParts) || $GLOBALS['TL_DCA'][$strTable]['fields'][$arrParts[0]]['inputType'] !== 'multiColumnEditor')
         {
@@ -37,10 +39,10 @@ class Hooks extends \Controller
         }
 
         // support for jumpTo fields -> bypass check in \Contao\Ajax -> comment "The field does not exist" line 282
-        if ((\Input::post('action') != 'reloadPagetree' && \Input::post('action') != 'reloadFiletree') || $strTable === 'fieldpalette') {
+        if ((Request::getPost('action') != 'reloadPagetree' && Request::getPost('action') != 'reloadFiletree') || $strTable === 'fieldpalette') {
             return;
         }
 
-        $GLOBALS['TL_DCA'][$strTable]['fields'][\Input::post('name')] = true;
+        $GLOBALS['TL_DCA'][$strTable]['fields'][Request::getPost('name')] = true;
     }
 }
