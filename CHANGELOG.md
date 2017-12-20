@@ -1,12 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.3.1] - 2017-12-20
+
+#### Fixed
+- missing value for widget in some setups (for example [multifileupload](https://github.com/heimrichhannot/contao-multifileupload))
+
 ## [1.3.0] - 2017-12-18
 
-## Fixed
+#### Fixed
 - post data issue
 
-### Changed
+#### Changed
 - switched post data retrieval to heimrichhannot/contao-request for security reasons
 
 ## [1.2.11] - 2017-11-17
