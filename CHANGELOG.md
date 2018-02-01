@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - picker widgets in fieldpalette containing a multi column editor widget
+- composer.json
 
 ### Added
 - partial support for rte textareas -> reload necessary at the moment in order to apply the js

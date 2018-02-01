@@ -10,8 +10,8 @@
     "edit"
   ],
   "type": "contao-module",
-  "homepage": "https://bitbucket.org/heimrichhannot/contao-multi_column_editor",
-  "license": "LGPL-3.0+",
+  "homepage": "https://github.com/heimrichhannot/contao-multi_column_editor",
+  "license": "LGPL-3.0-or-later",
   "authors": [
     {
       "name": "Heimrich & Hannot",
@@ -21,7 +21,7 @@
     }
   ],
   "support": {
-    "issues": "https://bitbucket.org/heimrichhannot/contao-multi_column_editor/issues"
+    "issues": "https://github.com/heimrichhannot/contao-multi_column_editor/issues"
   },
   "require": {
     "php": "~5.4 || ~7.0",
