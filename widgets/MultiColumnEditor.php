@@ -3,6 +3,7 @@
 namespace HeimrichHannot\MultiColumnEditor;
 
 
+use Contao\BackendTemplate;
 use HeimrichHannot\Ajax\Ajax;
 use HeimrichHannot\Ajax\AjaxAction;
 use HeimrichHannot\FormHybrid\FormAjax;
@@ -13,12 +14,12 @@ use HeimrichHannot\Request\Request;
 class MultiColumnEditor extends \Widget
 {
 
-    protected $blnSubmitInput = true;
-    protected $blnForAttribute = true;
-    protected $strTemplate = 'be_multi_column_editor';
+    protected $blnSubmitInput    = true;
+    protected $blnForAttribute   = true;
+    protected $strTemplate       = 'be_multi_column_editor';
     protected $strEditorTemplate = 'multi_column_editor';
     protected $arrDca;
-    protected $arrWidgetErrors = [];
+    protected $arrWidgetErrors   = [];
 
     const ACTION_ADD_ROW    = 'addRow';
     const ACTION_DELETE_ROW = 'deleteRow';
@@ -126,7 +127,8 @@ class MultiColumnEditor extends \Widget
             $strTable     = $this->objDca->table;
             $strFieldName = $this->objDca->field;
             $varValue     = $this->objDca->value;
-        } else
+        }
+        else
         {
             $strTable     = $this->strTable;
             $strFieldName = $this->strName;
@@ -171,7 +173,8 @@ class MultiColumnEditor extends \Widget
         $objTemplate->maxRowCount = $intMaxRowCount;
 
         // actions
-        $objTemplate->ajaxAddUrl    = Container::isBackend() ? \Environment::get('request') : AjaxAction::generateUrl(static::NAME, static::ACTION_ADD_ROW);
+        $objTemplate->ajaxAddUrl    =
+            Container::isBackend() ? \Environment::get('request') : AjaxAction::generateUrl(static::NAME, static::ACTION_ADD_ROW);
         $objTemplate->ajaxDeleteUrl =
             Container::isBackend() ? \Environment::get('request') : AjaxAction::generateUrl(static::NAME, static::ACTION_DELETE_ROW);
         $objTemplate->ajaxSortUrl   =
@@ -184,11 +187,13 @@ class MultiColumnEditor extends \Widget
         {
             // restore from entity
             $arrValues = static::prefixValuesWithFieldName(deserialize($varValue, true), $strFieldName);
-        } elseif (is_array($_POST))
+        }
+        elseif (is_array($_POST))
         {
             // restore from post
             $arrValues = static::prefixValuesWithFieldName(static::restoreValueFromPost($_POST, $strFieldName, $arrDca), $strFieldName);
-        } else
+        }
+        else
         {
             $arrValues = [];
         }
@@ -210,7 +215,8 @@ class MultiColumnEditor extends \Widget
                     $arrValues = static::sortRows($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
                     break;
             }
-        } elseif (Ajax::isRelated(static::NAME))
+        }
+        elseif (Ajax::isRelated(static::NAME))
         {
             switch ($strAction)
             {
@@ -461,10 +467,12 @@ class MultiColumnEditor extends \Widget
                     if ($arrData['eval']['rgxp'] == 'date')
                     {
                         $objWidget->value = \Date::parse(\Config::get('dateFormat'), $objWidget->value);
-                    } elseif ($arrData['eval']['rgxp'] == 'time')
+                    }
+                    elseif ($arrData['eval']['rgxp'] == 'time')
                     {
                         $objWidget->value = \Date::parse(\Config::get('timeFormat'), $objWidget->value);
-                    } elseif ($arrData['eval']['rgxp'] == 'datim')
+                    }
+                    elseif ($arrData['eval']['rgxp'] == 'datim')
                     {
                         $objWidget->value = \Date::parse(\Config::get('datimFormat'), $objWidget->value);
                     }
@@ -518,7 +526,12 @@ class MultiColumnEditor extends \Widget
                 $strOnSelect = ",\n        onSelect: function() { Backend.autoSubmit(\"" . $strTable . "\"); }";
             }
 
-            $wizard .= ' ' . \Image::getHtml('assets/datepicker/images/icon.svg', '', 'title="' . \StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['datepicker']) . '" id="toggle_' . $objWidget->id . '" style="cursor:pointer"') . '
+            $wizard .= ' ' . \Image::getHtml(
+                    'assets/datepicker/images/icon.svg',
+                    '',
+                    'title="' . \StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['datepicker']) . '" id="toggle_' . $objWidget->id
+                    . '" style="cursor:pointer"'
+                ) . '
   <script>
     window.addEvent("domready", function() {
       new Picker.Date($("ctrl_' . $objWidget->id . '"), {
@@ -541,7 +554,12 @@ class MultiColumnEditor extends \Widget
             // Support single fields as well (see #5240)
             $strKey = $arrData['eval']['multiple'] ? $strField . '_0' : $strField;
 
-            $wizard .= ' ' . \Image::getHtml('pickcolor.svg', $GLOBALS['TL_LANG']['MSC']['colorpicker'], 'title="' . \StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['colorpicker']) . '" id="moo_' . $strField . '" style="cursor:pointer"') . '
+            $wizard .= ' ' . \Image::getHtml(
+                    'pickcolor.svg',
+                    $GLOBALS['TL_LANG']['MSC']['colorpicker'],
+                    'title="' . \StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['colorpicker']) . '" id="moo_' . $strField
+                    . '" style="cursor:pointer"'
+                ) . '
   <script>
     window.addEvent("domready", function() {
       var cl = $("ctrl_' . $strKey . '").value.hexToRgb(true) || [255, 0, 0];
@@ -555,6 +573,34 @@ class MultiColumnEditor extends \Widget
       });
     });
   </script>';
+        }
+
+        // rte
+        if (!empty($arrData['eval']['rte']))
+        {
+            list ($file, $type) = explode('|', $arrData['eval']['rte'], 2);
+
+            $fileBrowserTypes = [];
+            $pickerBuilder    = \System::getContainer()->get('contao.picker.builder');
+
+            foreach (['file' => 'image', 'link' => 'file'] as $context => $fileBrowserType)
+            {
+                if ($pickerBuilder->supportsContext($context))
+                {
+                    $fileBrowserTypes[] = $fileBrowserType;
+                }
+            }
+
+            /** @var BackendTemplate|object $objTemplate */
+            $objTemplate                   = new \BackendTemplate('be_' . $file);
+            $objTemplate->selector         = 'ctrl_' . $objWidget->id;
+            $objTemplate->type             = $type;
+            $objTemplate->fileBrowserTypes = $fileBrowserTypes;
+
+            // Deprecated since Contao 4.0, to be removed in Contao 5.0
+            $objTemplate->language = \Backend::getTinyMceLanguage();
+
+            $wizard .= $objTemplate->parse();
         }
 
         $strHelp = (!$objWidget->hasErrors() ? static::help($arrData) : '');

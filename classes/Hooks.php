@@ -31,9 +31,7 @@ class Hooks extends \Controller
             return;
         }
 
-        $arrParts = explode('_', Request::getPost('name'));
-
-        if (empty($arrParts) || $GLOBALS['TL_DCA'][$strTable]['fields'][$arrParts[0]]['inputType'] !== 'multiColumnEditor')
+        if (isset($GLOBALS['TL_DCA'][$strTable]['fields'][Request::getPost('name')]))
         {
             return;
         }

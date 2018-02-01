@@ -1,83 +1,91 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2018-02-01
+
+### Fixed
+- picker widgets in fieldpalette containing a multi column editor widget
+
+### Added
+- partial support for rte textareas -> reload necessary at the moment in order to apply the js
+
 ## [1.3.1] - 2017-12-20
 
-#### Fixed
+### Fixed
 - missing value for widget in some setups (for example [multifileupload](https://github.com/heimrichhannot/contao-multifileupload))
 
 ## [1.3.0] - 2017-12-18
 
-#### Fixed
+### Fixed
 - post data issue
 
-#### Changed
+### Changed
 - switched post data retrieval to heimrichhannot/contao-request for security reasons
 
 ## [1.2.11] - 2017-11-17
 
-## Fixed
+### Fixed
 - ajax bug
 
 ## [1.2.10] - 2017-11-07
 
-## Fixed
+### Fixed
 - js bug
 
 ## [1.2.9] - 2017-11-06
 
-## Fixed
+### Fixed
 - fe and be javascript
 
 ## [1.2.8] - 2017-11-06
 
-## Fixed
+### Fixed
 - min and max row count
 
 ## [1.2.7] - 2017-11-03
 
-## Fixed
+### Fixed
 - min and max row count
 
 ## [1.2.6] - 2017-11-01
 
-## Fixed
+### Fixed
 - limited ajax support for tree widgets to mce
 
 ## [1.2.5] - 2017-10-30
 
-## Fixed
+### Fixed
 - min row count
 
 ## [1.2.4] - 2017-10-25
 
-## Added
+### Added
 - support for the inputType "fileTree"
 
 ## [1.2.3] - 2017-08-30
 
-## Fixed
+### Fixed
 - return `HTTP/1.1 400 Bad Request` only if action belongs to `Hooks::executePostActionsHook`
 
 ## [1.2.2] - 2017-08-30
 
-## Added
+### Added
 - support for the inputType "jumpTo"
 
 ## [1.2.1] - 2017-08-28
 
-## Fixed
+### Fixed
 - sorting
 
 ## [1.2.0] - 2017-08-28
 
-## Added
+### Added
 - sortable flag in order to make the rows of the widget sortable (currently backend only, frontend to come)
 - Contao 4 icons
 
 ## [1.1.13] - 2017-07-27
 
-## Fixed
+### Fixed
 - heimrichhannot/contao-ajax dependency added
 
 ## [1.1.12] - 2017-07-27
