@@ -109,8 +109,6 @@ class MultiColumnEditor extends \Widget
             $this->blnSubmitInput = false;
         }
 
-        $varInput = static::unprefixValuesWithFieldName($varInput, $this->strName);
-
         return parent::validator(serialize($varInput));
     }
 
@@ -276,25 +274,6 @@ class MultiColumnEditor extends \Widget
             foreach ($arrValue as $strKey => $varValue)
             {
                 $arrRow[$strFieldName . '_' . $strKey] = $varValue;
-            }
-
-            $arrResult[] = $arrRow;
-        }
-
-        return $arrResult;
-    }
-
-    private static function unprefixValuesWithFieldName(array $arrValues, $strFieldName)
-    {
-        $arrResult = [];
-
-        foreach ($arrValues as $arrValue)
-        {
-            $arrRow = [];
-
-            foreach ($arrValue as $strKey => $varValue)
-            {
-                $arrRow[str_replace($strFieldName, '', $strKey)] = $varValue;
             }
 
             $arrResult[] = $arrRow;

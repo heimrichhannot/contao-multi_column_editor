@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.4.2] - 2018-03-26
+
+### Fixed
+- removed non required `MultiColumnEditor::unprefixValuesWithFieldName()`
+
 ## [1.4.1] - 2018-03-14
 
 ### Fixed
