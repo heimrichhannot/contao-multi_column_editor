@@ -2,6 +2,7 @@
 
 namespace HeimrichHannot\MultiColumnEditor;
 
+use HeimrichHannot\Haste\Dca\General;
 use HeimrichHannot\Request\Request;
 
 class Hooks extends \Controller
@@ -20,19 +21,19 @@ class Hooks extends \Controller
                 die('Bad Request');
             }
 
+            $objDc->activeRecord = General::getModelInstance($objDc->table, $objDc->id);
+
             die(MultiColumnEditor::generateEditorForm('multi_column_editor', $objDc->table, $objDc->field, $objDc->value, $objDc));
         }
     }
 
     public function loadDataContainerHook($strTable)
     {
-        if (!Request::getPost('name'))
-        {
+        if (!Request::getPost('name')) {
             return;
         }
 
-        if (isset($GLOBALS['TL_DCA'][$strTable]['fields'][Request::getPost('name')]))
-        {
+        if (isset($GLOBALS['TL_DCA'][$strTable]['fields'][Request::getPost('name')])) {
             return;
         }
 

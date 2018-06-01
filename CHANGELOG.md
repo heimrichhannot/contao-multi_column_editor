@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.4.3] - 2018-06-01
+
+### Fixed
+- activeRecord issue with ajax calls
+
 ## [1.4.2] - 2018-03-26
 
 ### Fixed
