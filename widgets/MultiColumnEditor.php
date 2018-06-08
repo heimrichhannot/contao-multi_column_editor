@@ -555,7 +555,7 @@ class MultiColumnEditor extends \Widget
         }
 
         // rte
-        if (!empty($arrData['eval']['rte']))
+        if (version_compare(VERSION, '4.4', '>=') && !empty($arrData['eval']['rte']))
         {
             list ($file, $type) = explode('|', $arrData['eval']['rte'], 2);
 

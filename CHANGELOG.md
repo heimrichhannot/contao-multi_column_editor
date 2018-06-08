@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.4.4] - 2018-06-08
+
+### Fixed
+- System::getContainer bug
+
 ## [1.4.3] - 2018-06-01
 
 ### Fixed
