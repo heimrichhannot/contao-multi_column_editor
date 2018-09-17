@@ -29,11 +29,13 @@ class Hooks extends \Controller
 
     public function loadDataContainerHook($strTable)
     {
-        if (!Request::getPost('name')) {
+        $dca = &$GLOBALS['TL_DCA'][$strTable];
+
+        if (!($name = Request::getPost('name'))) {
             return;
         }
 
-        if (isset($GLOBALS['TL_DCA'][$strTable]['fields'][Request::getPost('name')])) {
+        if (isset($dca['fields'][$name])) {
             return;
         }
 
@@ -42,6 +44,41 @@ class Hooks extends \Controller
             return;
         }
 
-        $GLOBALS['TL_DCA'][$strTable]['fields'][Request::getPost('name')] = true;
+        if ($this->isMceField($name, $dca))
+        {
+            $dca['fields'][$name] = true;
+        }
+    }
+
+    protected function isMceField($name, $dca)
+    {
+        $isMce = false;
+        $cleanedName = preg_replace('/_\d+$/i', '', $name);
+        $mceFieldArrays = [];
+
+        foreach ($dca['fields'] as $field => $data)
+        {
+            if ($data['inputType'] !== 'multiColumnEditor' || !isset($data['eval']['multiColumnEditor']['fields']))
+            {
+                continue;
+            }
+
+            $mceFieldArrays[$field] = $data;
+        }
+
+        if (empty($mceFieldArrays))
+        {
+            return false;
+        }
+
+        foreach ($mceFieldArrays as $field => $mceData)
+        {
+            if (in_array(preg_replace('/^' . $field . '_/', '', $cleanedName), array_keys($mceData['eval']['multiColumnEditor']['fields'])))
+            {
+                $isMce = true;
+            }
+        }
+
+        return $isMce;
     }
 }
