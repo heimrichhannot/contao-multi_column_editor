@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.4.6] - 2018-09-18
+
+### Fixed
+- type issue in loadDataContainer hook (see https://github.com/heimrichhannot/contao-multi_column_editor/issues/3)
+
 ## [1.4.5] - 2018-09-17
 
 ### Fixed

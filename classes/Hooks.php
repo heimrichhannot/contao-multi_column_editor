@@ -29,6 +29,11 @@ class Hooks extends \Controller
 
     public function loadDataContainerHook($strTable)
     {
+        if (!isset($GLOBALS['TL_DCA'][$strTable]))
+        {
+            return;
+        }
+
         $dca = &$GLOBALS['TL_DCA'][$strTable];
 
         if (!($name = Request::getPost('name'))) {
@@ -46,7 +51,7 @@ class Hooks extends \Controller
 
         if ($this->isMceField($name, $dca))
         {
-            $dca['fields'][$name] = true;
+            $dca['fields'][$name] = [];
         }
     }
 
